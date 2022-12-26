@@ -321,37 +321,37 @@ void loop()
           break;
       }
       digitalWrite(LED, false);
-    }
-    reading1[detune_index] = analogRead(DETUNE1);
-    int reading_sum = 0;
-    for (byte i = 0; i < DETUNE_MEAN; i++){
-      reading_sum += reading1[i];
-    }
-    long detuneNew = (reading_sum - 512 * DETUNE_MEAN) * 100 * FREQUENCY / (DETUNE_MEAN * 512);
-    if (abs(detuneNew - detune1) > DETUNE_NOISE){
-      detune1 = detuneNew;
-      si5351.set_freq(100 * FREQUENCY + detune1, SI5351_CLK1);
-      sprintf(buffer, "1 %d", reading_sum);
-      tm.displayText(buffer);
-    }
+    } else {
+      reading1[detune_index] = analogRead(DETUNE1);
+      int reading_sum = 0;
+      for (byte i = 0; i < DETUNE_MEAN; i++){
+        reading_sum += reading1[i];
+      }
+      long detuneNew = (reading_sum - 512 * DETUNE_MEAN) * 100 * FREQUENCY / (DETUNE_MEAN * 512);
+      if (abs(detuneNew - detune1) > DETUNE_NOISE){
+        detune1 = detuneNew;
+        si5351.set_freq(100 * FREQUENCY + detune1, SI5351_CLK1);
+        sprintf(buffer, "1 %d", reading_sum);
+        tm.displayText(buffer);
+      }
 
-    reading2[detune_index] = analogRead(DETUNE2);
-    reading_sum = 0;
-    for (byte i = 0; i < DETUNE_MEAN; i++){
-      reading_sum += reading2[i];
-    }
-    detuneNew = (reading_sum - 512 * DETUNE_MEAN) * 100 * FREQUENCY / (DETUNE_MEAN * 512);
-    if (abs(detuneNew - detune2) > DETUNE_NOISE){
-      detune2 = detuneNew;
-      si5351.set_freq(100 * FREQUENCY + detune2, SI5351_CLK2);
-      sprintf(buffer, "2 %d", reading_sum);
-      tm.displayText(buffer);
-    }
+      reading2[detune_index] = analogRead(DETUNE2);
+      reading_sum = 0;
+      for (byte i = 0; i < DETUNE_MEAN; i++){
+        reading_sum += reading2[i];
+      }
+      detuneNew = (reading_sum - 512 * DETUNE_MEAN) * 100 * FREQUENCY / (DETUNE_MEAN * 512);
+      if (abs(detuneNew - detune2) > DETUNE_NOISE){
+        detune2 = detuneNew;
+        si5351.set_freq(100 * FREQUENCY + detune2, SI5351_CLK2);
+        sprintf(buffer, "2 %d", reading_sum);
+        tm.displayText(buffer);
+      }
 
-  detune_index++;
-  if (detune_index == DETUNE_MEAN){
-    detune_index = 0;
-  }
+    detune_index++;
+    if (detune_index == DETUNE_MEAN){
+      detune_index = 0;
+    }
     uint8_t buttons = tm.readButtons();
      switch (buttons) {
       case 1 :
@@ -375,5 +375,6 @@ void loop()
         break;
       default:
         break;
-     }
+    }
+  }
 }
