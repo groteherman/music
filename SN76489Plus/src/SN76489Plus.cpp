@@ -100,12 +100,11 @@ long detune1, detune2;
 
 #define MAX_POLYPHONY 9
 #define MAX_NOTES 2 * MAX_POLYPHONY
-byte notes[MAX_POLYPHONY];
+byte notesPlaying[MAX_POLYPHONY];
 byte notesInOrder[MAX_NOTES];
-unsigned long times[MAX_POLYPHONY];
 char buffer[8];
 byte polyphony;
-byte highestNoteInOrder;
+byte numberOfNotes;
 byte detune_index;
 int reading1[DETUNE_MEAN];
 int reading2[DETUNE_MEAN];
@@ -233,7 +232,7 @@ void setup()
   }
   AllOff();
   detune_index = 0;
-  highestNoteInOrder = 0;
+  numberOfNotes = 0;
 }
 
 void loop()
@@ -258,46 +257,63 @@ void loop()
           //velocity = MIDI.getData2();
           //channel = MIDI.getChannel();
           if (MIDI_LOW <= noteMsg && noteMsg < MIDI_LOW + MIDI_NUMBER){
-            byte effectiveNoteMsg = noteMsg;
             if (type == midi::NoteOn) {
-              if (highestNoteInOrder < MAX_NOTES) {
-                notesInOrder[highestNoteInOrder++] = noteMsg;
+              if (numberOfNotes < MAX_NOTES) {
+                notesInOrder[numberOfNotes++] = noteMsg;
               } else {
                 //alles 1 opschuiven
+                for (byte i = 0; i < MAX_NOTES - 1; i++){
+                  notesInOrder[i] = notesInOrder[i+1];
+                }
+                notesInOrder[MAX_NOTES - 1] = noteMsg;
               }
             } else {
               //note ertussenuit halen
+              bool noteFound = false;
+              for (byte i = 0; i < numberOfNotes; i++){
+                if (notesInOrder[i] == noteMsg){
+                  noteFound = true;
+                }
+                if (noteFound && i < numberOfNotes - 1){
+                  notesInOrder[i] = notesInOrder[i+1];
+                }
+              }
+              if (noteFound){
+                numberOfNotes--;
+              }
             }
-            if (type == midi::NoteOn) {
-              bool foundEmpty = false;
-              for (byte i = 0; i < polyphony; i++){
-                if (notes[i] == 0 && !foundEmpty){
-                  notes[i] = effectiveNoteMsg;
-                  times[i] = millis();
-                  noteOn(i, effectiveNoteMsg, polyphony);
-                  foundEmpty = true;
+            for (byte j = 0; j < polyphony; j++){
+              bool shouldPlay = false;
+              for(byte i = numberOfNotes - polyphony; i < numberOfNotes; i++){
+                if (i < 0 ) {
+                  break;
+                }
+                if (notesPlaying[j] == notesInOrder[i]){
+                  shouldPlay = true;
+                }
+              }
+              if (!shouldPlay){
+                noteOff(j, polyphony);
+                notesPlaying[j] = 0;
+              }
+            }
+            for(byte i = numberOfNotes - polyphony; i < numberOfNotes; i++){
+              bool isPlaying = false;
+              for (byte j = 0; j < polyphony; j++){
+                if (notesPlaying[j] == notesInOrder[i]){
+                  isPlaying = true;
                   break;
                 }
               }
-              if (!foundEmpty){
-                byte oldestIndex = 0;
-                unsigned long oldestTime = times[0];
-                for (byte i = 1; i < polyphony; i++){
-                  if (times[i] < oldestTime){
-                    oldestIndex = i;
-                    oldestTime = times[i];
+              if (isPlaying){
+                break;
+              } else {
+                for (byte j = 0; j < polyphony; j++){
+                  if (notesPlaying[j] == 0){
+                    notesPlaying[j] = notesInOrder[i];
+                    noteOn(j, notesPlaying[j], polyphony);
+                    break;
                   }
-                }
-                notes[oldestIndex] = effectiveNoteMsg;
-                times[oldestIndex] = millis();
-                noteOn(oldestIndex, effectiveNoteMsg, polyphony);
-              }
-            } else {
-              for (byte i = 0; i < polyphony; i++){
-                if (notes[i] == effectiveNoteMsg){
-                  notes[i] = 0;
-                  noteOff(i, polyphony);
-                  break;
                 }
               }
             }
