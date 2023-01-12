@@ -272,7 +272,7 @@ void handlePitchBend(byte channel, int bend){
   //digitalWrite(LED, false);
 }
 
-void handleDetune(){
+void readDetune(){
   //digitalWrite(LED, true);
   reading1[detune_index] = analogRead(DETUNE1);
   int reading_sum = 0;
@@ -412,6 +412,6 @@ void loop()
   MIDI.read();
   handleButtons();
   if (doDetune) {
-    handleDetune();
+    readDetune();
   }
 }
