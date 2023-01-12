@@ -306,7 +306,7 @@ void readDetune(){
   //digitalWrite(LED, false);
 }
 
-void handleButtons(){
+void readButtons(){
   digitalWrite(LED, true);
   uint8_t buttons = tm.readButtons();
   switch (buttons) {
@@ -410,7 +410,7 @@ void setup()
 void loop()
 {
   MIDI.read();
-  handleButtons();
+  readButtons();
   if (doDetune) {
     readDetune();
   }
