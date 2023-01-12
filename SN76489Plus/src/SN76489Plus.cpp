@@ -97,6 +97,7 @@ uint16_t noteDiv[MIDI_NUMBER] = {
 ,64,60,57,54,51};
 
 long detune1, detune2;
+bool doDetune;
 
 #define MAX_POLYPHONY 9
 #define MAX_NOTES 10
@@ -321,6 +322,14 @@ void handleButtons(){
     polyphony = 9;
     tm.displayText("POLY9");
     break;
+  case 16 :
+    doDetune = false;
+    tm.displayText("DET OFF");
+    break;
+  case 32 :
+    doDetune = true;
+    tm.displayText("DET ON");
+    break;
   case 64 :
     tm.sendCommand(ACTIVATE);
     break;
@@ -391,6 +400,7 @@ void setup()
   }
   AllOff();
   detune_index = 0;
+  doDetune = false;
   numberOfNotes = 0;
   MIDI.setHandleNoteOn(handleNoteOn);
   MIDI.setHandleNoteOff(handleNoteOff);
@@ -400,6 +410,8 @@ void setup()
 void loop()
 {
   MIDI.read();
-  handleDetune();
   handleButtons();
+  if (doDetune) {
+    handleDetune();
+  }
 }
