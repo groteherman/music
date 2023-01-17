@@ -187,9 +187,9 @@ void handleNotesPlaying(){
         break;
       }
     }
-    if (!shouldPlay){
-      noteOff(j, polyphony);
+    if (!shouldPlay && notesPlaying[j] != 0){
       notesPlaying[j] = 0;
+      noteOff(j, polyphony);
     }
   }
   for(byte i = firstNote; i < numberOfNotes; i++){
@@ -201,8 +201,6 @@ void handleNotesPlaying(){
       }
     }
     if (isPlaying){
-      break;
-    } else {
       for (byte j = 0; j < polyphony; j++){
         if (notesPlaying[j] == 0){
           notesPlaying[j] = notesInOrder[i];
