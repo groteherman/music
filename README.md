@@ -8,5 +8,5 @@ As an IDE I used Visual Studio Code with the PlatformIO plugin. To get started I
 [Si5351 library](https://github.com/etherkit/Si5351Arduino) and 
 [TM1638lite library](https://github.com/danja/TM1638lite)
 
-I intend to properly use these libraries as libraries. I added the SN76489::setDivider method to be able to set exact pre-calculated divisors for the SN76489
-without using float-arithmatic and possible roundig errors.
+I intend to properly use these libraries as libraries. I added the SN76489::setDivider method to be able to set exact pre-calculated divisors for each note
+so there is no need for float-arithmatic.
