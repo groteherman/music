@@ -97,15 +97,15 @@ uint16_t noteDiv[MIDI_NUMBER] = {
 ,64,60,57,54,51};
 
 long detune1, detune2;
+bool doDetune;
 
 #define MAX_POLYPHONY 9
-#define MAX_NOTES 2 * MAX_POLYPHONY
-byte notes[MAX_POLYPHONY];
-byte notesInOrder[MAX_NOTES];
-unsigned long times[MAX_POLYPHONY];
+#define MAX_NOTES 10
+volatile byte numberOfNotes;
+volatile byte notesPlaying[MAX_POLYPHONY];
+volatile byte notesInOrder[MAX_NOTES];
 char buffer[8];
 byte polyphony;
-byte highestNoteInOrder;
 byte detune_index;
 int reading1[DETUNE_MEAN];
 int reading2[DETUNE_MEAN];
@@ -174,11 +174,176 @@ void AllOff(){
   digitalWrite(PIN_NotCE2, true);
 }
 
+void handleNotesPlaying(){
+  int firstNote = numberOfNotes - polyphony;
+  if (firstNote < 0){
+    firstNote = 0;
+  }
+  for (byte j = 0; j < polyphony; j++){
+    bool turnOff = true;
+    for(byte i = firstNote; i < numberOfNotes; i++){
+      if (notesPlaying[j] == notesInOrder[i] && notesPlaying[j] != 0){
+        turnOff = false;
+        break;
+      }
+    }
+    if (turnOff && notesPlaying[j] != 0){
+      notesPlaying[j] = 0;
+      noteOff(j, polyphony);
+    }
+  }
+  for(byte i = firstNote; i < numberOfNotes; i++){
+    bool isPlaying = false;
+    for (byte j = 0; j < polyphony; j++){
+      if (notesPlaying[j] == notesInOrder[i]){
+        isPlaying = true;
+        break;
+      }
+    }
+    if (!isPlaying){
+      for (byte j = 0; j < polyphony; j++){
+        if (notesPlaying[j] == 0){
+          notesPlaying[j] = notesInOrder[i];
+          noteOn(j, notesPlaying[j], polyphony);
+          break;
+        }
+      }
+    }
+  }
+}
+
+void handleNoteOn(byte channel, byte pitch, byte velocity){
+  if (MIDI_LOW <= pitch && pitch < MIDI_LOW + MIDI_NUMBER){
+    //digitalWrite(LED, true);
+    bool noteFound = false;
+    for (byte i = 0; i < numberOfNotes; i++){
+      if (notesInOrder[i] == pitch){
+        noteFound = true;
+        break;
+      }
+    }              
+    if (!noteFound) {
+      if (numberOfNotes < MAX_NOTES) {
+        notesInOrder[numberOfNotes++] = pitch;
+      } else {
+        //alles 1 opschuiven
+        for (byte i = 0; i < MAX_NOTES - 1; i++){
+          notesInOrder[i] = notesInOrder[i+1];
+        }
+        notesInOrder[MAX_NOTES - 1] = pitch;
+      }
+    }
+    handleNotesPlaying();
+    //digitalWrite(LED, false);
+  }
+}
+
+void handleNoteOff(byte channel, byte pitch, byte velocity){
+  if (MIDI_LOW <= pitch && pitch < MIDI_LOW + MIDI_NUMBER){
+    //digitalWrite(LED, true);
+    //note ertussenuit halen
+    bool noteFound = false;
+    for (byte i = 0; i < numberOfNotes; i++){
+      if (notesInOrder[i] == pitch){
+        noteFound = true;
+      }
+      if (noteFound && i < numberOfNotes - 1){
+        notesInOrder[i] = notesInOrder[i+1];
+      }
+    }
+    if (noteFound){
+      numberOfNotes--;
+    }
+    handleNotesPlaying();
+    //digitalWrite(LED, false);
+  }
+}
+
+void handlePitchBend(byte channel, int bend){
+  //digitalWrite(LED, true);
+  int normalizedBend = bend - 64;
+  if (normalizedBend > 0){
+    si5351.set_freq(100 * FREQUENCY + normalizedBend * 100 * FREQUENCY / 64, SI5351_CLK0);
+  } else {
+    si5351.set_freq(100 * FREQUENCY + normalizedBend * 1000000, SI5351_CLK0);
+  }
+  //digitalWrite(LED, false);
+}
+
+void readDetune(){
+  //digitalWrite(LED, true);
+  reading1[detune_index] = analogRead(DETUNE1);
+  int reading_sum = 0;
+  for (byte i = 0; i < DETUNE_MEAN; i++){
+    reading_sum += reading1[i];
+  }
+  long detuneNew = (reading_sum - 512 * DETUNE_MEAN) * 100 * FREQUENCY / (DETUNE_MEAN * 512);
+  if (abs(detuneNew - detune1) > DETUNE_NOISE){
+    detune1 = detuneNew;
+    si5351.set_freq(100 * FREQUENCY + detune1, SI5351_CLK1);
+    sprintf(buffer, "1 %d", reading_sum);
+    tm.displayText(buffer);
+  }
+
+  reading2[detune_index] = analogRead(DETUNE2);
+  reading_sum = 0;
+  for (byte i = 0; i < DETUNE_MEAN; i++){
+    reading_sum += reading2[i];
+  }
+  detuneNew = (reading_sum - 512 * DETUNE_MEAN) * 100 * FREQUENCY / (DETUNE_MEAN * 512);
+  if (abs(detuneNew - detune2) > DETUNE_NOISE){
+    detune2 = detuneNew;
+    si5351.set_freq(100 * FREQUENCY + detune2, SI5351_CLK2);
+    sprintf(buffer, "2 %d", reading_sum);
+    tm.displayText(buffer);
+  }
+  detune_index++;
+  if (detune_index == DETUNE_MEAN){
+    detune_index = 0;
+  }
+  //digitalWrite(LED, false);
+}
+
+void readButtons(){
+  digitalWrite(LED, true);
+  uint8_t buttons = tm.readButtons();
+  switch (buttons) {
+  case 1 :
+    polyphony = 1;
+    tm.displayText("MONO");
+    break;
+  case 2 :
+    polyphony = 3;
+    tm.displayText("POLY3");
+    break;
+  case 4 :
+    polyphony = 9;
+    tm.displayText("POLY9");
+    break;
+  case 16 :
+    doDetune = false;
+    tm.displayText("DET OFF");
+    break;
+  case 32 :
+    doDetune = true;
+    tm.displayText("DET ON");
+    break;
+  case 64 :
+    tm.sendCommand(ACTIVATE);
+    break;
+  case 128 :
+    AllOff();
+    tm.sendCommand(DISPLAY_OFF);
+    break;
+  default:
+    break;
+  }
+  digitalWrite(LED, false);
+}
+
 void setup()
 {
   bool i2c_found;
-
-  // Start serial and initialize the Si5351
   //Serial.begin(115200);
   //Serial.println("");
   i2c_found = si5351.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
@@ -227,137 +392,24 @@ void setup()
   digitalWrite(LED, false);
 
   MIDI.begin(MIDI_CHANNEL_OMNI);
-  polyphony = 9;
+  polyphony = 3;
     for (byte i = 1; i <=8; i++ ){
     tm.setLED(i, false);
   }
   AllOff();
   detune_index = 0;
-  highestNoteInOrder = 0;
+  doDetune = false;
+  numberOfNotes = 0;
+  MIDI.setHandleNoteOn(handleNoteOn);
+  MIDI.setHandleNoteOff(handleNoteOff);
+  MIDI.setHandlePitchBend(handlePitchBend);
 }
 
 void loop()
 {
-    byte type;
-    if (MIDI.read()) {                    
-      digitalWrite(LED, true);
-      type = MIDI.getType();
-      switch (type) {
-        case midi::PitchBend: {
-          long pitchBend = MIDI.getData2() - 64;
-          if (pitchBend > 0){
-            si5351.set_freq(100 * FREQUENCY + pitchBend * 100 * FREQUENCY / 64, SI5351_CLK0);
-          } else {
-            si5351.set_freq(100 * FREQUENCY + pitchBend * 1000000, SI5351_CLK0);
-          }
-          break;
-        }
-        case midi::NoteOn: 
-        case midi::NoteOff:
-          byte noteMsg = MIDI.getData1();
-          //velocity = MIDI.getData2();
-          //channel = MIDI.getChannel();
-          if (MIDI_LOW <= noteMsg && noteMsg < MIDI_LOW + MIDI_NUMBER){
-            byte effectiveNoteMsg = noteMsg;
-            if (type == midi::NoteOn) {
-              if (highestNoteInOrder < MAX_NOTES) {
-                notesInOrder[highestNoteInOrder++] = noteMsg;
-              } else {
-                //alles 1 opschuiven
-              }
-            } else {
-              //note ertussenuit halen
-            }
-            if (type == midi::NoteOn) {
-              bool foundEmpty = false;
-              for (byte i = 0; i < polyphony; i++){
-                if (notes[i] == 0 && !foundEmpty){
-                  notes[i] = effectiveNoteMsg;
-                  times[i] = millis();
-                  noteOn(i, effectiveNoteMsg, polyphony);
-                  foundEmpty = true;
-                  break;
-                }
-              }
-              if (!foundEmpty){
-                byte oldestIndex = 0;
-                unsigned long oldestTime = times[0];
-                for (byte i = 1; i < polyphony; i++){
-                  if (times[i] < oldestTime){
-                    oldestIndex = i;
-                    oldestTime = times[i];
-                  }
-                }
-                notes[oldestIndex] = effectiveNoteMsg;
-                times[oldestIndex] = millis();
-                noteOn(oldestIndex, effectiveNoteMsg, polyphony);
-              }
-            } else {
-              for (byte i = 0; i < polyphony; i++){
-                if (notes[i] == effectiveNoteMsg){
-                  notes[i] = 0;
-                  noteOff(i, polyphony);
-                  break;
-                }
-              }
-            }
-          }
-          break;
-      }
-      digitalWrite(LED, false);
-    }
-    reading1[detune_index] = analogRead(DETUNE1);
-    int reading_sum = 0;
-    for (byte i = 0; i < DETUNE_MEAN; i++){
-      reading_sum += reading1[i];
-    }
-    long detuneNew = (reading_sum - 512 * DETUNE_MEAN) * 100 * FREQUENCY / (DETUNE_MEAN * 512);
-    if (abs(detuneNew - detune1) > DETUNE_NOISE){
-      detune1 = detuneNew;
-      si5351.set_freq(100 * FREQUENCY + detune1, SI5351_CLK1);
-      sprintf(buffer, "1 %d", reading_sum);
-      tm.displayText(buffer);
-    }
-
-    reading2[detune_index] = analogRead(DETUNE2);
-    reading_sum = 0;
-    for (byte i = 0; i < DETUNE_MEAN; i++){
-      reading_sum += reading2[i];
-    }
-    detuneNew = (reading_sum - 512 * DETUNE_MEAN) * 100 * FREQUENCY / (DETUNE_MEAN * 512);
-    if (abs(detuneNew - detune2) > DETUNE_NOISE){
-      detune2 = detuneNew;
-      si5351.set_freq(100 * FREQUENCY + detune2, SI5351_CLK2);
-      sprintf(buffer, "2 %d", reading_sum);
-      tm.displayText(buffer);
-    }
-
-  detune_index++;
-  if (detune_index == DETUNE_MEAN){
-    detune_index = 0;
+  MIDI.read();
+  readButtons();
+  if (doDetune) {
+    readDetune();
   }
-    uint8_t buttons = tm.readButtons();
-     switch (buttons) {
-      case 1 :
-        polyphony = 1;
-        tm.displayText("MONO");
-        break;
-      case 2 :
-        polyphony = 3;
-        tm.displayText("POLY3");
-        break;
-      case 4 :
-        polyphony = 9;
-        tm.displayText("POLY9");
-        break;
-      case 64 :
-        tm.sendCommand(ACTIVATE);
-        break;
-      case 128 :
-        AllOff();
-        tm.sendCommand(DISPLAY_OFF);
-        break;
-      default:
-        break;
-     }
 }

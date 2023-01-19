@@ -1,0 +1,162 @@
+[
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\CDC.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\CDC.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\CDC.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\HardwareSerial.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\HardwareSerial.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\HardwareSerial.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\HardwareSerial0.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\HardwareSerial0.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\HardwareSerial0.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\HardwareSerial1.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\HardwareSerial1.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\HardwareSerial1.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\HardwareSerial2.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\HardwareSerial2.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\HardwareSerial2.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\HardwareSerial3.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\HardwareSerial3.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\HardwareSerial3.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\IPAddress.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\IPAddress.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\IPAddress.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\PluggableUSB.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\PluggableUSB.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\PluggableUSB.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\Print.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\Print.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\Print.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\Stream.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\Stream.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\Stream.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\Tone.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\Tone.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\Tone.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\USBCore.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\USBCore.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\USBCore.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-gcc.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\WInterrupts.c.o -c -std=gnu11 -fno-fat-lto-objects -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\WInterrupts.c",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\WInterrupts.c"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\WMath.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\WMath.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\WMath.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\WString.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\WString.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\WString.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\abi.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\abi.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\abi.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-gcc.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\hooks.c.o -c -std=gnu11 -fno-fat-lto-objects -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\hooks.c",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\hooks.c"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\main.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\main.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\main.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\new.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\new.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\new.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-gcc.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\wiring.c.o -c -std=gnu11 -fno-fat-lto-objects -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\wiring.c",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\wiring.c"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-gcc.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\wiring_analog.c.o -c -std=gnu11 -fno-fat-lto-objects -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\wiring_analog.c",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\wiring_analog.c"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-gcc.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\wiring_digital.c.o -c -std=gnu11 -fno-fat-lto-objects -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\wiring_digital.c",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\wiring_digital.c"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-as.exe -mmcu=atmega328p -o .pio\\build\\nanoatmega328\\FrameworkArduino\\wiring_pulse.S.o C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\wiring_pulse.S",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\wiring_pulse.S"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-gcc.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\wiring_pulse.c.o -c -std=gnu11 -fno-fat-lto-objects -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\wiring_pulse.c",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\wiring_pulse.c"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-gcc.exe -o .pio\\build\\nanoatmega328\\FrameworkArduino\\wiring_shift.c.o -c -std=gnu11 -fno-fat-lto-objects -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\wiring_shift.c",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino\\wiring_shift.c"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\libfbb\\Wire\\Wire.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\libraries\\Wire\\src -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\libraries\\Wire\\src\\Wire.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\libraries\\Wire\\src\\Wire.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-gcc.exe -o .pio\\build\\nanoatmega328\\libfbb\\Wire\\utility\\twi.c.o -c -std=gnu11 -fno-fat-lto-objects -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\libraries\\Wire\\src -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\libraries\\Wire\\src\\utility\\twi.c",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\libraries\\Wire\\src\\utility\\twi.c"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\src\\MIDI.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -Iinclude -Isrc -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\libraries\\Wire\\src -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs src\\MIDI.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\git\\music\\SN76489Plus\\src\\MIDI.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\src\\SN76489.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -Iinclude -Isrc -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\libraries\\Wire\\src -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs src\\SN76489.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\git\\music\\SN76489Plus\\src\\SN76489.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\src\\SN76489Plus.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -Iinclude -Isrc -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\libraries\\Wire\\src -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs src\\SN76489Plus.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\git\\music\\SN76489Plus\\src\\SN76489Plus.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\src\\TM1638lite.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -Iinclude -Isrc -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\libraries\\Wire\\src -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs src\\TM1638lite.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\git\\music\\SN76489Plus\\src\\TM1638lite.cpp"
+    },
+    {
+        "command": "C:\\Users\\herman\\.platformio\\packages\\toolchain-atmelavr\\bin\\avr-g++.exe -o .pio\\build\\nanoatmega328\\src\\si5351.cpp.o -c -fno-exceptions -fno-threadsafe-statics -fpermissive -std=gnu++11 -mmcu=atmega328p -Os -Wall -ffunction-sections -fdata-sections -flto -DPLATFORMIO=60105 -DARDUINO_AVR_NANO -DF_CPU=16000000L -DARDUINO_ARCH_AVR -DARDUINO=10808 -Iinclude -Isrc -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\libraries\\Wire\\src -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\cores\\arduino -IC:\\Users\\herman\\.platformio\\packages\\framework-arduino-avr\\variants\\eightanaloginputs src\\si5351.cpp",
+        "directory": "C:\\git\\music\\SN76489Plus",
+        "file": "C:\\git\\music\\SN76489Plus\\src\\si5351.cpp"
+    }
+]
