@@ -1,4 +1,4 @@
-# H1 MIDI controlled oscillator with 3 SN76489 and Arduino Nano
+# MIDI controlled oscillator with 3 SN76489 and Arduino Nano
 
 In this project 3 SN76489 chips are used to create sound. Each SN76489 has it's own oscillator provided by a SI5351.
 This creates the possibility to detune the second en third SN76489 with respect to the first SN76489.
