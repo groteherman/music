@@ -180,14 +180,14 @@ void handleNotesPlaying(){
     firstNote = 0;
   }
   for (byte j = 0; j < polyphony; j++){
-    bool shouldPlay = false;
+    bool turnOff = true;
     for(byte i = firstNote; i < numberOfNotes; i++){
-      if (notesPlaying[j] == notesInOrder[i]){
-        shouldPlay = true;
+      if (notesPlaying[j] == notesInOrder[i] && notesPlaying[j] != 0){
+        turnOff = false;
         break;
       }
     }
-    if (!shouldPlay && notesPlaying[j] != 0){
+    if (turnOff && notesPlaying[j] != 0){
       notesPlaying[j] = 0;
       noteOff(j, polyphony);
     }
@@ -200,7 +200,7 @@ void handleNotesPlaying(){
         break;
       }
     }
-    if (isPlaying){
+    if (!isPlaying){
       for (byte j = 0; j < polyphony; j++){
         if (notesPlaying[j] == 0){
           notesPlaying[j] = notesInOrder[i];
@@ -392,7 +392,7 @@ void setup()
   digitalWrite(LED, false);
 
   MIDI.begin(MIDI_CHANNEL_OMNI);
-  polyphony = 1;
+  polyphony = 3;
     for (byte i = 1; i <=8; i++ ){
     tm.setLED(i, false);
   }
