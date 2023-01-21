@@ -82,6 +82,10 @@ byte whichSN[3] = {PIN_NotCE0, PIN_NotCE1, PIN_NotCE2};
 
 Si5351 si5351;
 TM1638lite tm(TM_STROBE, TM_CLOCK, TM_DATA);
+bool pressed1 = false;
+byte polyValue[3] = {1, 3, 9};
+byte polyIndex = 0;
+
 MIDI_CREATE_DEFAULT_INSTANCE();
 
 #define MIDI_NUMBER 53
@@ -315,16 +319,16 @@ void readButtons(){
   uint8_t buttons = tm.readButtons();
   switch (buttons) {
   case 1 :
-    polyphony = 1;
-    tm.displayText("MONO");
-    break;
-  case 2 :
-    polyphony = 3;
-    tm.displayText("POLY3");
-    break;
-  case 4 :
-    polyphony = 9;
-    tm.displayText("POLY9");
+    if (!pressed1){
+      pressed1 = true;
+      polyIndex++;
+      if (polyIndex > 2){
+        polyIndex = 0;
+      }
+      polyphony = polyValue[polyIndex];
+      sprintf(buffer, "POLY %d", polyphony);
+      tm.displayText(buffer);
+    }
     break;
   case 16 :
     doDetune = false;
@@ -342,6 +346,7 @@ void readButtons(){
     tm.sendCommand(DISPLAY_OFF);
     break;
   default:
+    pressed1 = false;
     break;
   }
 }
