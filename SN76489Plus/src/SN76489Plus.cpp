@@ -312,7 +312,6 @@ void readDetune(){
 }
 
 void readButtons(){
-  digitalWrite(LED, true);
   uint8_t buttons = tm.readButtons();
   switch (buttons) {
   case 1 :
@@ -345,7 +344,6 @@ void readButtons(){
   default:
     break;
   }
-  digitalWrite(LED, false);
 }
 
 void setup()
