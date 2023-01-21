@@ -172,6 +172,13 @@ void AllOff(){
   digitalWrite(PIN_NotCE0, true);
   digitalWrite(PIN_NotCE1, true);
   digitalWrite(PIN_NotCE2, true);
+    for(byte i=0; i < MAX_POLYPHONY; i++){
+    notesPlaying[i] = 0;
+  }
+  for(byte i=0; i < MAX_NOTES; i++){
+    notesInOrder[i] = 0;
+  }
+  numberOfNotes = 0;
 }
 
 void handleNotesPlaying(){
