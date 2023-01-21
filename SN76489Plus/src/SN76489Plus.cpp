@@ -65,24 +65,19 @@
 #define TM_CLOCK 16
 #define TM_DATA 17
 
-#define DETUNE1 A7
-#define DETUNE2 A6
-
-#define DETUNE_NOISE 16
-#define DETUNE_MEAN 8
 //impliciet bij een NANO
 //Si5351_SDA 18; A4
 //Si5351_SCL 19; A5
 //MIDI_IN RX 0
 
-//nog over: 1 (TX) 13 (LED) 
+//pins not used: 1 (TX) 13 (LED) A6 and A7 (analogue in only)
 
 SN76489 mySN76489 = SN76489(PIN_NotWE, PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_D4, PIN_D5, PIN_D6, PIN_D7, FREQUENCY);
 byte whichSN[3] = {PIN_NotCE0, PIN_NotCE1, PIN_NotCE2};
 
 Si5351 si5351;
 TM1638lite tm(TM_STROBE, TM_CLOCK, TM_DATA);
-bool pressed1 = false;
+bool pressed1 = false, pressed2 = false, pressed4 = false, pressed8 = false;
 byte polyValue[3] = {1, 3, 9};
 byte polyIndex = 0;
 
@@ -100,8 +95,8 @@ uint16_t noteDiv[MIDI_NUMBER] = {
 ,128,121,114,108,102,96,91,85,81,76,72,68
 ,64,60,57,54,51};
 
-long detune1, detune2;
-bool doDetune;
+byte detuneToggle = 1;
+int detune1, detune2;
 
 #define MAX_POLYPHONY 9
 #define MAX_NOTES 10
@@ -111,8 +106,6 @@ volatile byte notesInOrder[MAX_NOTES];
 char buffer[8];
 byte polyphony;
 byte detune_index;
-int reading1[DETUNE_MEAN];
-int reading2[DETUNE_MEAN];
 
 void displayOn(int input1, int input2, int msg){
   sprintf(buffer, "* %d %d %d", input1, input2, msg);
@@ -281,40 +274,6 @@ void handlePitchBend(byte channel, int bend){
   //digitalWrite(LED, false);
 }
 
-void readDetune(){
-  //digitalWrite(LED, true);
-  reading1[detune_index] = analogRead(DETUNE1);
-  int reading_sum = 0;
-  for (byte i = 0; i < DETUNE_MEAN; i++){
-    reading_sum += reading1[i];
-  }
-  long detuneNew = (reading_sum - 512 * DETUNE_MEAN) * 100 * FREQUENCY / (DETUNE_MEAN * 512);
-  if (abs(detuneNew - detune1) > DETUNE_NOISE){
-    detune1 = detuneNew;
-    si5351.set_freq(100 * FREQUENCY + detune1, SI5351_CLK1);
-    sprintf(buffer, "1 %d", reading_sum);
-    tm.displayText(buffer);
-  }
-
-  reading2[detune_index] = analogRead(DETUNE2);
-  reading_sum = 0;
-  for (byte i = 0; i < DETUNE_MEAN; i++){
-    reading_sum += reading2[i];
-  }
-  detuneNew = (reading_sum - 512 * DETUNE_MEAN) * 100 * FREQUENCY / (DETUNE_MEAN * 512);
-  if (abs(detuneNew - detune2) > DETUNE_NOISE){
-    detune2 = detuneNew;
-    si5351.set_freq(100 * FREQUENCY + detune2, SI5351_CLK2);
-    sprintf(buffer, "2 %d", reading_sum);
-    tm.displayText(buffer);
-  }
-  detune_index++;
-  if (detune_index == DETUNE_MEAN){
-    detune_index = 0;
-  }
-  //digitalWrite(LED, false);
-}
-
 void readButtons(){
   uint8_t buttons = tm.readButtons();
   switch (buttons) {
@@ -330,13 +289,55 @@ void readButtons(){
       tm.displayText(buffer);
     }
     break;
-  case 16 :
-    doDetune = false;
-    tm.displayText("DET OFF");
+  case 2 :
+    if (!pressed2){
+      pressed2 = true;
+      if (detuneToggle == 1) {
+        detuneToggle = 2;
+      } else {
+        detuneToggle = 1;
+      }
+      sprintf(buffer, "DETUNE %d", detuneToggle);
+      tm.displayText(buffer);
+    }
     break;
-  case 32 :
-    doDetune = true;
-    tm.displayText("DET ON");
+  case 4 :
+    if (!pressed4){
+      delay(300);
+      pressed4 = true;
+    }
+    if (detuneToggle == 1){
+      detune1--;
+      si5351.set_freq(100 * FREQUENCY + 100 * detune1, SI5351_CLK1);
+    } else{
+      detune2--;
+      si5351.set_freq(100 * FREQUENCY + 100 * detune2, SI5351_CLK2);
+    }
+    sprintf(buffer, "%d %d", detune1, detune2);
+    tm.displayText(buffer);
+    break;
+  case 8 :
+    if (!pressed8){
+      delay(300);
+      pressed8 = true;
+    }
+    if (detuneToggle == 1){
+      detune1++;
+      si5351.set_freq(100 * FREQUENCY + 100 * detune1, SI5351_CLK1);
+    } else{
+      detune2++;
+      si5351.set_freq(100 * FREQUENCY + 100 * detune2, SI5351_CLK2);
+    }
+    sprintf(buffer, "%d %d", detune1, detune2);
+    tm.displayText(buffer);
+    break;
+  case 12: //buttons 4 and 8 at the same time
+    detune1 = 0;
+    detune2 = 0;
+    si5351.set_freq(100 * FREQUENCY, SI5351_CLK1);
+    si5351.set_freq(100 * FREQUENCY, SI5351_CLK2);
+    tm.displayText("DET RST");
+    delay(300);
     break;
   case 64 :
     tm.sendCommand(ACTIVATE);
@@ -347,6 +348,9 @@ void readButtons(){
     break;
   default:
     pressed1 = false;
+    pressed2 = false;
+    pressed4 = false;
+    pressed8 = false;
     break;
   }
 }
@@ -376,8 +380,6 @@ void setup()
 
   //AllOff();
   pinMode(LED, OUTPUT); 
-  pinMode(DETUNE1, INPUT); 
-  pinMode(DETUNE2, INPUT); 
 
   digitalWrite(LED, true);
 
@@ -408,7 +410,6 @@ void setup()
   }
   AllOff();
   detune_index = 0;
-  doDetune = false;
   numberOfNotes = 0;
   MIDI.setHandleNoteOn(handleNoteOn);
   MIDI.setHandleNoteOff(handleNoteOff);
@@ -419,7 +420,4 @@ void loop()
 {
   MIDI.read();
   readButtons();
-  if (doDetune) {
-    readDetune();
-  }
 }
