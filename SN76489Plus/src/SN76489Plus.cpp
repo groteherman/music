@@ -105,15 +105,14 @@ volatile byte notesPlaying[MAX_POLYPHONY];
 volatile byte notesInOrder[MAX_NOTES];
 char buffer[8];
 byte polyphony;
-byte detune_index;
 
-void displayOn(int input1, int input2, int msg){
+void displayNoteOn(int input1, int input2, int msg){
   sprintf(buffer, "* %d %d %d", input1, input2, msg);
   tm.displayText(buffer);
   tm.setLED(input1, true);
 }
 
-void displayOff(int input1, int input2){
+void displayNoteOff(int input1, int input2){
   sprintf(buffer, "- %d %d", input1, input2);
   tm.displayText(buffer);
   tm.setLED(input1, false);
@@ -125,7 +124,7 @@ void noteOn(byte index, byte msg, byte polyphony){
     mySN76489.setDivider(index / 3, noteDiv[msg - MIDI_LOW]);
     mySN76489.setAttenuation(index / 3, 0x0);
     digitalWrite(whichSN[index % 3], true);
-    displayOn(index, index /3, msg);
+    displayNoteOn(index, index /3, msg);
   } else {
     digitalWrite(whichSN[0], false);
     digitalWrite(whichSN[1], false);
@@ -135,7 +134,7 @@ void noteOn(byte index, byte msg, byte polyphony){
     digitalWrite(whichSN[0], true);
     digitalWrite(whichSN[1], true);
     digitalWrite(whichSN[2], true);
-    displayOn(index % 3, index /3, msg);
+    displayNoteOn(index % 3, index /3, msg);
   }
 }
 
@@ -144,7 +143,7 @@ void noteOff(byte index, byte polyphony){
     digitalWrite(whichSN[index % 3], false);
     mySN76489.setAttenuation(index / 3, 0xf);
     digitalWrite(whichSN[index % 3], true);
-    displayOff(index, index / 3);
+    displayNoteOff(index, index / 3);
 } else {
     digitalWrite(whichSN[0], false);
     digitalWrite(whichSN[1], false);
@@ -153,7 +152,7 @@ void noteOff(byte index, byte polyphony){
     digitalWrite(whichSN[0], true);
     digitalWrite(whichSN[1], true);
     digitalWrite(whichSN[2], true);
-    displayOff(index % 3, index / 3);
+    displayNoteOff(index % 3, index / 3);
   }
 }
 
@@ -409,7 +408,6 @@ void setup()
     tm.setLED(i, false);
   }
   AllOff();
-  detune_index = 0;
   numberOfNotes = 0;
   MIDI.setHandleNoteOn(handleNoteOn);
   MIDI.setHandleNoteOff(handleNoteOff);
