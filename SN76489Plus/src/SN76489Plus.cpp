@@ -281,8 +281,8 @@ void readButtons(){
     pressed4 = false;
     pressed8 = false;
   } else {
-    sprintf(buffer, "BUT %d", buttons);
-    tm.displayText(buffer);
+    //sprintf(buffer, "BUT %d", buttons);
+    //tm.displayText(buffer);
     switch (buttons) {
     case 1 :
       if (!pressed1){
