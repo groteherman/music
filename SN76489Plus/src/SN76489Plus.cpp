@@ -105,7 +105,6 @@ volatile byte notesPlaying[MAX_POLYPHONY];
 volatile byte notesInOrder[MAX_NOTES];
 char buffer[8];
 byte polyphony;
-byte detune_index;
 
 void displayOn(int input1, int input2, int msg){
   sprintf(buffer, "* %d %d %d", input1, input2, msg);
@@ -409,7 +408,8 @@ void setup()
     tm.setLED(i, false);
   }
   AllOff();
-  detune_index = 0;
+  detune1 = 0;
+  detune2 = 0;
   numberOfNotes = 0;
   MIDI.setHandleNoteOn(handleNoteOn);
   MIDI.setHandleNoteOff(handleNoteOff);
