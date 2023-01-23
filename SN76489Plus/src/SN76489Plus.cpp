@@ -105,17 +105,16 @@ volatile byte notesPlaying[MAX_POLYPHONY];
 volatile byte notesInOrder[MAX_NOTES];
 char buffer[8];
 byte polyphony;
-byte detune_index;
 
 void displayOn(int input1, int input2, int msg){
   sprintf(buffer, "* %d %d %d", input1, input2, msg);
-  tm.displayText(buffer);
+  //tm.displayText(buffer);
   tm.setLED(input1, true);
 }
 
 void displayOff(int input1, int input2){
   sprintf(buffer, "- %d %d", input1, input2);
-  tm.displayText(buffer);
+  //tm.displayText(buffer);
   tm.setLED(input1, false);
 }
 
@@ -276,82 +275,85 @@ void handlePitchBend(byte channel, int bend){
 
 void readButtons(){
   uint8_t buttons = tm.readButtons();
-  switch (buttons) {
-  case 1 :
-    if (!pressed1){
-      pressed1 = true;
-      polyIndex++;
-      if (polyIndex > 2){
-        polyIndex = 0;
-      }
-      polyphony = polyValue[polyIndex];
-      sprintf(buffer, "POLY %d", polyphony);
-      tm.displayText(buffer);
-    }
-    break;
-  case 2 :
-    if (!pressed2){
-      pressed2 = true;
-      if (detuneToggle == 1) {
-        detuneToggle = 2;
-      } else {
-        detuneToggle = 1;
-      }
-      sprintf(buffer, "DETUNE %d", detuneToggle);
-      tm.displayText(buffer);
-    }
-    break;
-  case 4 :
-    if (!pressed4){
-      delay(300);
-      pressed4 = true;
-    }
-    if (detuneToggle == 1){
-      detune1--;
-      si5351.set_freq(100 * FREQUENCY + 100 * detune1, SI5351_CLK1);
-    } else{
-      detune2--;
-      si5351.set_freq(100 * FREQUENCY + 100 * detune2, SI5351_CLK2);
-    }
-    sprintf(buffer, "%d %d", detune1, detune2);
-    tm.displayText(buffer);
-    break;
-  case 8 :
-    if (!pressed8){
-      delay(300);
-      pressed8 = true;
-    }
-    if (detuneToggle == 1){
-      detune1++;
-      si5351.set_freq(100 * FREQUENCY + 100 * detune1, SI5351_CLK1);
-    } else{
-      detune2++;
-      si5351.set_freq(100 * FREQUENCY + 100 * detune2, SI5351_CLK2);
-    }
-    sprintf(buffer, "%d %d", detune1, detune2);
-    tm.displayText(buffer);
-    break;
-  case 12: //buttons 4 and 8 at the same time
-    detune1 = 0;
-    detune2 = 0;
-    si5351.set_freq(100 * FREQUENCY, SI5351_CLK1);
-    si5351.set_freq(100 * FREQUENCY, SI5351_CLK2);
-    tm.displayText("DET RST");
-    delay(300);
-    break;
-  case 64 :
-    tm.sendCommand(ACTIVATE);
-    break;
-  case 128 :
-    AllOff();
-    tm.sendCommand(DISPLAY_OFF);
-    break;
-  default:
+  if (buttons == 0) {
     pressed1 = false;
     pressed2 = false;
     pressed4 = false;
     pressed8 = false;
-    break;
+  } else {
+    sprintf(buffer, "BUT %d", buttons);
+    tm.displayText(buffer);
+    switch (buttons) {
+    case 1 :
+      if (!pressed1){
+        pressed1 = true;
+        polyIndex++;
+        if (polyIndex > 2){
+          polyIndex = 0;
+        }
+        polyphony = polyValue[polyIndex];
+        sprintf(buffer, "POLY %d", polyphony);
+        tm.displayText(buffer);
+      }
+      break;
+    case 2 :
+      if (!pressed2){
+        pressed2 = true;
+        if (detuneToggle == 1) {
+          detuneToggle = 2;
+        } else {
+          detuneToggle = 1;
+        }
+        sprintf(buffer, "DETUNE %d", detuneToggle);
+        tm.displayText(buffer);
+      }
+      break;
+    case 4 :
+      if (!pressed4){
+        delay(300);
+        pressed4 = true;
+      }
+      if (detuneToggle == 1){
+        detune1--;
+        si5351.set_freq(100 * FREQUENCY + 100 * detune1, SI5351_CLK1);
+      } else{
+        detune2--;
+        si5351.set_freq(100 * FREQUENCY + 100 * detune2, SI5351_CLK2);
+      }
+      sprintf(buffer, "%d %d", detune1, detune2);
+      tm.displayText(buffer);
+      break;
+    case 8 :
+      if (!pressed8){
+        delay(300);
+        pressed8 = true;
+      }
+      if (detuneToggle == 1){
+        detune1++;
+        si5351.set_freq(100 * FREQUENCY + 100 * detune1, SI5351_CLK1);
+      } else{
+        detune2++;
+        si5351.set_freq(100 * FREQUENCY + 100 * detune2, SI5351_CLK2);
+      }
+      sprintf(buffer, "%d %d", detune1, detune2);
+      tm.displayText(buffer);
+      break;
+    case 12: //buttons 4 and 8 at the same time
+      detune1 = 0;
+      detune2 = 0;
+      si5351.set_freq(100 * FREQUENCY, SI5351_CLK1);
+      si5351.set_freq(100 * FREQUENCY, SI5351_CLK2);
+      tm.displayText("DET RST");
+      delay(300);
+      break;
+    case 64 :
+      tm.sendCommand(ACTIVATE);
+      break;
+    case 128 :
+      AllOff();
+      tm.sendCommand(DISPLAY_OFF);
+      break;
+    }
   }
 }
 
@@ -409,7 +411,8 @@ void setup()
     tm.setLED(i, false);
   }
   AllOff();
-  detune_index = 0;
+  detune1 = 0;
+  detune2 = 0;
   numberOfNotes = 0;
   MIDI.setHandleNoteOn(handleNoteOn);
   MIDI.setHandleNoteOff(handleNoteOff);
