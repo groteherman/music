@@ -45,7 +45,7 @@
 
 //#define FREQUENCY 4286819ULL
 #define FREQUENCY 2143409ULL
-#define LED 13
+#define GATE 13
 
 #define PIN_NotCE0 8
 #define PIN_NotCE1 2
@@ -70,7 +70,7 @@
 //Si5351_SCL 19; A5
 //MIDI_IN RX 0
 
-//pins not used: 1 (TX) 13 (LED) A6 and A7 (analogue in only)
+//pins not used: 1 (TX) A6 and A7 (analogue in only)
 
 SN76489 mySN76489 = SN76489(PIN_NotWE, PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_D4, PIN_D5, PIN_D6, PIN_D7, FREQUENCY);
 byte whichSN[3] = {PIN_NotCE0, PIN_NotCE1, PIN_NotCE2};
@@ -217,7 +217,6 @@ void handleNotesPlaying(){
 
 void handleNoteOn(byte channel, byte pitch, byte velocity){
   if (MIDI_LOW <= pitch && pitch < MIDI_LOW + MIDI_NUMBER){
-    //digitalWrite(LED, true);
     bool noteFound = false;
     for (byte i = 0; i < numberOfNotes; i++){
       if (notesInOrder[i] == pitch){
@@ -237,13 +236,11 @@ void handleNoteOn(byte channel, byte pitch, byte velocity){
       }
     }
     handleNotesPlaying();
-    //digitalWrite(LED, false);
   }
 }
 
 void handleNoteOff(byte channel, byte pitch, byte velocity){
   if (MIDI_LOW <= pitch && pitch < MIDI_LOW + MIDI_NUMBER){
-    //digitalWrite(LED, true);
     //note ertussenuit halen
     bool noteFound = false;
     for (byte i = 0; i < numberOfNotes; i++){
@@ -258,19 +255,16 @@ void handleNoteOff(byte channel, byte pitch, byte velocity){
       numberOfNotes--;
     }
     handleNotesPlaying();
-    //digitalWrite(LED, false);
   }
 }
 
 void handlePitchBend(byte channel, int bend){
-  //digitalWrite(LED, true);
   int normalizedBend = bend - 64;
   if (normalizedBend > 0){
     si5351.set_freq(100 * FREQUENCY + normalizedBend * 100 * FREQUENCY / 64, SI5351_CLK0);
   } else {
     si5351.set_freq(100 * FREQUENCY + normalizedBend * 1000000, SI5351_CLK0);
   }
-  //digitalWrite(LED, false);
 }
 
 void readButtons(){
@@ -381,9 +375,8 @@ void setup()
   pinMode(PIN_NotCE2, OUTPUT); 
 
   //AllOff();
-  pinMode(LED, OUTPUT); 
-
-  digitalWrite(LED, true);
+  pinMode(GATE, OUTPUT); 
+  digitalWrite(GATE, false);
 
   tm.setLED(1, true);
   digitalWrite(PIN_NotCE0, false);
@@ -391,19 +384,15 @@ void setup()
   delay(100);
 
   tm.setLED(2, true);
-  digitalWrite(LED, false);
   mySN76489.setDivider(0, noteDiv[11]);
   delay(100);
   tm.setLED(3, true);
-  digitalWrite(LED, true);
   mySN76489.setDivider(0, noteDiv[23]);
   delay(100);
 
   tm.setLED(4, true);
   mySN76489.setAttenuation(0, 0xF);
   //digitalWrite(PIN_NotCE0, true);
-
-  digitalWrite(LED, false);
 
   MIDI.begin(MIDI_CHANNEL_OMNI);
   polyphony = 3;
