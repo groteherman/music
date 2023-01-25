@@ -407,7 +407,7 @@ void setup()
 
   MIDI.begin(MIDI_CHANNEL_OMNI);
   polyphony = 3;
-    for (byte i = 1; i <=8; i++ ){
+  for (byte i = 0; i < 8; i++ ){
     tm.setLED(i, false);
   }
   AllOff();
