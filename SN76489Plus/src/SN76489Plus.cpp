@@ -227,6 +227,9 @@ void handleNoteOn(byte channel, byte pitch, byte velocity){
     if (!noteFound) {
       if (numberOfNotes < MAX_NOTES) {
         notesInOrder[numberOfNotes++] = pitch;
+        if (numberOfNotes == 1){
+          digitalWrite(GATE, true);
+        }
       } else {
         //alles 1 opschuiven
         for (byte i = 0; i < MAX_NOTES - 1; i++){
@@ -253,6 +256,9 @@ void handleNoteOff(byte channel, byte pitch, byte velocity){
     }
     if (noteFound){
       numberOfNotes--;
+    }
+    if (numberOfNotes == 0){
+      digitalWrite(GATE, false);
     }
     handleNotesPlaying();
   }
