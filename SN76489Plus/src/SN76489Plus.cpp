@@ -157,7 +157,8 @@ void noteOff(byte index, byte polyphony){
 }
 
 void AllOff(){
-  tm.displayText("ALL OFF");
+  strcpy(buffer, "ALL OFF");
+  tm.displayText(buffer);
   digitalWrite(PIN_NotCE0, false);
   digitalWrite(PIN_NotCE1, false);
   digitalWrite(PIN_NotCE2, false);
@@ -343,7 +344,8 @@ void readButtons(){
       detune2 = 0;
       si5351.set_freq(100 * FREQUENCY, SI5351_CLK1);
       si5351.set_freq(100 * FREQUENCY, SI5351_CLK2);
-      tm.displayText("DET RST");
+      strcpy(buffer, "DET RST");
+      tm.displayText(buffer);
       delay(300);
       break;
     case 64 :
