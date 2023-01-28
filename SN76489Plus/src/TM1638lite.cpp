@@ -62,13 +62,13 @@ void TM1638lite::setLED(uint8_t position, uint8_t value)
   digitalWrite(STROBE_IO, HIGH);
 }
 
-void TM1638lite::displayText(String text) {
-  uint8_t length = text.length();
-
+void TM1638lite::displayText(char* text) {
+  uint8_t length = strlen(text);
   for (uint8_t i = 0; i < length; i++) {
-    for (uint8_t position = 0; position < 8; position++) {
-      displayASCII(position, text[position]);
-    }
+    displayASCII(i, text[i]);
+  }
+  for (uint8_t i = length; i < 8; i++) {
+    displayASCII(i, ' ');
   }
 }
 
