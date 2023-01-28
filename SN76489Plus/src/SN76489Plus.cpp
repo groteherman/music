@@ -96,11 +96,11 @@ uint16_t noteDiv[MIDI_NUMBER] = {
 ,64,60,57,54,51};
 
 byte detuneToggle = 1;
-int detune1, detune2;
+int detune1 = 0, detune2 = 0;
 
 #define MAX_POLYPHONY 9
 #define MAX_NOTES 10
-volatile byte numberOfNotes;
+volatile byte numberOfNotes = 0;
 volatile byte notesPlaying[MAX_POLYPHONY];
 volatile byte notesInOrder[MAX_NOTES];
 char buffer[9];
@@ -408,9 +408,6 @@ void setup()
     tm.setLED(i, false);
   }
   AllOff();
-  detune1 = 0;
-  detune2 = 0;
-  numberOfNotes = 0;
   MIDI.setHandleNoteOn(handleNoteOn);
   MIDI.setHandleNoteOff(handleNoteOff);
   MIDI.setHandlePitchBend(handlePitchBend);
