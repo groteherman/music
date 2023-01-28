@@ -1,10 +1,4 @@
-/*Nano*/
-/*Eigen voeding voor TM1638, en USB-voeding voor Nano niet via de monitor helpt voor minder ruis*/
 /*
- * si5351_example.ino - Simple example of using Si5351Arduino library
- *
- * Copyright (C) 2015 - 2016 Jason Milldrum <milldrum@gmail.com>
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -107,13 +101,13 @@ char buffer[9];
 byte polyphony;
 
 void displayNoteOn(int input1, int input2, int msg){
-  sprintf(buffer, "* %d %d %d", input1, input2, msg);
+  //sprintf(buffer, "* %d %d %d", input1, input2, msg);
   //tm.displayText(buffer);
   tm.setLED(input1, true);
 }
 
 void displayNoteOff(int input1, int input2){
-  sprintf(buffer, "- %d %d", input1, input2);
+  //sprintf(buffer, "- %d %d", input1, input2);
   //tm.displayText(buffer);
   tm.setLED(input1, false);
 }
@@ -368,12 +362,8 @@ void setup()
   if(!i2c_found)
   {
     //Serial.println("Device not found on I2C bus!");
-  } else {
-    //Serial.println("YES! Device found on I2C bus!");
   }
 
-  // Set CLK0 to output 3.99 MHz
-  //si5351.set_freq(399999990ULL, SI5351_CLK0);
   si5351.set_freq(100 * FREQUENCY, SI5351_CLK0);
   si5351.set_freq(101 * FREQUENCY, SI5351_CLK1);
   si5351.set_freq(102 * FREQUENCY, SI5351_CLK2);
@@ -400,7 +390,6 @@ void setup()
 
   tm.setLED(4, true);
   mySN76489.setAttenuation(0, 0xF);
-  //digitalWrite(PIN_NotCE0, true);
 
   MIDI.begin(MIDI_CHANNEL_OMNI);
   polyphony = 3;
