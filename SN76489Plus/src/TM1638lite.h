@@ -24,7 +24,7 @@ class TM1638lite
     void reset();
     uint8_t readButtons();
     void setLED(uint8_t position, uint8_t value);
-    void displayText(String text);
+    void displayText(char* text);
     void displaySS(uint8_t position, uint8_t value);
     void displayASCII(uint8_t position, uint8_t ascii);
     void displayHex(uint8_t position, uint8_t hex);

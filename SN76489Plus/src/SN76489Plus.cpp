@@ -103,7 +103,7 @@ int detune1, detune2;
 volatile byte numberOfNotes;
 volatile byte notesPlaying[MAX_POLYPHONY];
 volatile byte notesInOrder[MAX_NOTES];
-char buffer[8];
+char buffer[9];
 byte polyphony;
 
 void displayNoteOn(int input1, int input2, int msg){
