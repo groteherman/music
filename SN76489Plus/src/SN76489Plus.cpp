@@ -89,7 +89,6 @@ uint16_t noteDiv[MIDI_NUMBER] = {
 ,64,60,57,54,51};
 
 byte detuneToggle = 1;
-int detune1 = 0, detune2 = 0;
 
 #define MAX_POLYPHONY 9
 #define MAX_NOTES 10
