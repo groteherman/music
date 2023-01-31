@@ -71,7 +71,6 @@ byte whichSN[3] = {PIN_NotCE0, PIN_NotCE1, PIN_NotCE2};
 
 Si5351 si5351;
 TM1638lite tm(TM_STROBE, TM_CLOCK, TM_DATA);
-bool pressed1 = false, pressed2 = false, pressed4 = false, pressed8 = false;
 byte polyValue[3] = {1, 3, 9};
 
 MIDI_CREATE_DEFAULT_INSTANCE();
@@ -98,6 +97,7 @@ volatile byte numberOfNotes = 0;
 volatile byte notesPlaying[MAX_POLYPHONY];
 volatile byte notesInOrder[MAX_NOTES];
 char buffer[9];
+uint8_t previousButtons = 0;
 
 struct Config {
   byte midiChannel;
@@ -279,18 +279,12 @@ void handlePitchBend(byte channel, int bend){
 
 void readButtons(){
   uint8_t buttons = tm.readButtons();
-  if (buttons == 0) {
-    pressed1 = false;
-    pressed2 = false;
-    pressed4 = false;
-    pressed8 = false;
-  } else {
+  if (buttons > 0) {
     //sprintf(buffer, "BUT %d", buttons);
     //tm.displayText(buffer);
     switch (buttons) {
     case 1 :
-      if (!pressed1){
-        pressed1 = true;
+      if (previousButtons != 1){
         myConfig.polyIndex++;
         if (myConfig.polyIndex > 2){
           myConfig.polyIndex = 0;
@@ -300,8 +294,7 @@ void readButtons(){
       }
       break;
     case 2 :
-      if (!pressed2){
-        pressed2 = true;
+      if (previousButtons != 2){
         if (detuneToggle == 1) {
           detuneToggle = 2;
         } else {
@@ -312,9 +305,8 @@ void readButtons(){
       }
       break;
     case 4 :
-      if (!pressed4){
+      if (previousButtons != 4){
         delay(KEY_PRESS_DELAY);
-        pressed4 = true;
       }
       if (detuneToggle == 1){
         myConfig.deTune1--;
@@ -327,9 +319,8 @@ void readButtons(){
       tm.displayText(buffer);
       break;
     case 8 :
-      if (!pressed8){
+      if (previousButtons != 8){
         delay(KEY_PRESS_DELAY);
-        pressed8 = true;
       }
       if (detuneToggle == 1){
         myConfig.deTune1++;
@@ -359,6 +350,7 @@ void readButtons(){
       break;
     }
   }
+  previousButtons = buttons;
 }
 
 void setup()
