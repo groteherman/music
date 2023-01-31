@@ -92,6 +92,8 @@ byte detuneToggle = 1;
 
 #define MAX_POLYPHONY 9
 #define MAX_NOTES 10
+#define KEY_PRESS_DELAY 300
+
 volatile byte numberOfNotes = 0;
 volatile byte notesPlaying[MAX_POLYPHONY];
 volatile byte notesInOrder[MAX_NOTES];
@@ -311,7 +313,7 @@ void readButtons(){
       break;
     case 4 :
       if (!pressed4){
-        delay(300);
+        delay(KEY_PRESS_DELAY);
         pressed4 = true;
       }
       if (detuneToggle == 1){
@@ -326,7 +328,7 @@ void readButtons(){
       break;
     case 8 :
       if (!pressed8){
-        delay(300);
+        delay(KEY_PRESS_DELAY);
         pressed8 = true;
       }
       if (detuneToggle == 1){
