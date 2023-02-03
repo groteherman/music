@@ -274,7 +274,7 @@ void handleNoteOff(byte channel, byte pitch, byte velocity){
 }
 
 void handlePitchBend(byte channel, int bend){
-  //TODO for all SN...
+  //TODO for all SN...; respect detune
   int normalizedBend = bend - 64;
   if (normalizedBend > 0){
     si5351.set_freq(100 * FREQUENCY + normalizedBend * 10 * FREQUENCY / 64, SI5351_CLK0);
