@@ -1,10 +1,4 @@
-/*Nano*/
-/*Eigen voeding voor TM1638, en USB-voeding voor Nano niet via de monitor helpt voor minder ruis*/
 /*
- * si5351_example.ino - Simple example of using Si5351Arduino library
- *
- * Copyright (C) 2015 - 2016 Jason Milldrum <milldrum@gmail.com>
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -44,7 +38,8 @@
 ***************************************************************************/
 
 //#define FREQUENCY 4286819ULL
-#define FREQUENCY 2143409ULL
+#define FREQUENCY 2143409ULL 
+#define DETUNE_FACTOR 500000
 #define GATE 13
 
 #define PIN_NotCE0 8
@@ -77,9 +72,8 @@ byte whichSN[3] = {PIN_NotCE0, PIN_NotCE1, PIN_NotCE2};
 
 Si5351 si5351;
 TM1638lite tm(TM_STROBE, TM_CLOCK, TM_DATA);
-bool pressed1 = false, pressed2 = false, pressed4 = false, pressed8 = false;
 byte polyValue[3] = {1, 3, 9};
-byte polyIndex = 0;
+byte polyphony;
 
 MIDI_CREATE_DEFAULT_INSTANCE();
 
@@ -96,29 +90,43 @@ uint16_t noteDiv[MIDI_NUMBER] = {
 ,64,60,57,54,51};
 
 byte detuneToggle = 1;
-int detune1, detune2;
 
 #define MAX_POLYPHONY 9
 #define MAX_NOTES 10
-volatile byte numberOfNotes;
+#define KEY_LONG_DELAY 500
+#define KEY_SHORT_DELAY 10
+
+volatile byte numberOfNotes = 0;
 volatile byte notesPlaying[MAX_POLYPHONY];
 volatile byte notesInOrder[MAX_NOTES];
 char buffer[9];
-byte polyphony;
+uint8_t previousButtons = 0;
+
+#define MENUS 5
+byte menuIndex = 0;
+const char menu_0[] = "CH";
+const char menu_1[] = "PO";
+const char menu_2[] = "D0";
+const char menu_3[] = "D1";
+const char menu_4[] = "D2";
+const char *const menuTable[] = {menu_0, menu_1, menu_2, menu_3, menu_4};
+int config[MENUS] =     { 0, 1,    0,    0, 0};
+const int configMin[] = { 0, 0, -100, -100, -100};
+const int configMax[] = {15, 2,  100,  100,  100};
 
 void displayNoteOn(int input1, int input2, int msg){
-  sprintf(buffer, "* %d %d %d", input1, input2, msg);
+  //sprintf(buffer, "* %d %d %d", input1, input2, msg);
   //tm.displayText(buffer);
   tm.setLED(input1, true);
 }
 
 void displayNoteOff(int input1, int input2){
-  sprintf(buffer, "- %d %d", input1, input2);
+  //sprintf(buffer, "- %d %d", input1, input2);
   //tm.displayText(buffer);
   tm.setLED(input1, false);
 }
 
-void noteOn(byte index, byte msg, byte polyphony){
+void noteOn(byte index, byte msg){
   if (polyphony > 3){
     digitalWrite(whichSN[index % 3], false);
     mySN76489.setDivider(index / 3, noteDiv[msg - MIDI_LOW]);
@@ -138,7 +146,7 @@ void noteOn(byte index, byte msg, byte polyphony){
   }
 }
 
-void noteOff(byte index, byte polyphony){
+void noteOff(byte index){
   if (polyphony > 3){
     digitalWrite(whichSN[index % 3], false);
     mySN76489.setAttenuation(index / 3, 0xf);
@@ -157,7 +165,8 @@ void noteOff(byte index, byte polyphony){
 }
 
 void AllOff(){
-  tm.displayText("ALL OFF");
+  strcpy(buffer, "ALL OFF");
+  tm.displayText(buffer);
   digitalWrite(PIN_NotCE0, false);
   digitalWrite(PIN_NotCE1, false);
   digitalWrite(PIN_NotCE2, false);
@@ -168,7 +177,7 @@ void AllOff(){
   digitalWrite(PIN_NotCE0, true);
   digitalWrite(PIN_NotCE1, true);
   digitalWrite(PIN_NotCE2, true);
-    for(byte i=0; i < MAX_POLYPHONY; i++){
+  for(byte i=0; i < MAX_POLYPHONY; i++){
     notesPlaying[i] = 0;
   }
   for(byte i=0; i < MAX_NOTES; i++){
@@ -192,7 +201,7 @@ void handleNotesPlaying(){
     }
     if (turnOff && notesPlaying[j] != 0){
       notesPlaying[j] = 0;
-      noteOff(j, polyphony);
+      noteOff(j);
     }
   }
   for(byte i = firstNote; i < numberOfNotes; i++){
@@ -207,7 +216,7 @@ void handleNotesPlaying(){
       for (byte j = 0; j < polyphony; j++){
         if (notesPlaying[j] == 0){
           notesPlaying[j] = notesInOrder[i];
-          noteOn(j, notesPlaying[j], polyphony);
+          noteOn(j, notesPlaying[j]);
           break;
         }
       }
@@ -265,86 +274,48 @@ void handleNoteOff(byte channel, byte pitch, byte velocity){
 }
 
 void handlePitchBend(byte channel, int bend){
+  //TODO for all SN...; respect detune
   int normalizedBend = bend - 64;
   if (normalizedBend > 0){
-    si5351.set_freq(100 * FREQUENCY + normalizedBend * 100 * FREQUENCY / 64, SI5351_CLK0);
+    si5351.set_freq(100 * FREQUENCY + normalizedBend * 10 * FREQUENCY / 64, SI5351_CLK0);
   } else {
-    si5351.set_freq(100 * FREQUENCY + normalizedBend * 1000000, SI5351_CLK0);
+    si5351.set_freq(100 * FREQUENCY + normalizedBend * 100000, SI5351_CLK0);
   }
 }
 
 void readButtons(){
   uint8_t buttons = tm.readButtons();
-  if (buttons == 0) {
-    pressed1 = false;
-    pressed2 = false;
-    pressed4 = false;
-    pressed8 = false;
-  } else {
+  if (buttons > 0) {
     //sprintf(buffer, "BUT %d", buttons);
     //tm.displayText(buffer);
     switch (buttons) {
     case 1 :
-      if (!pressed1){
-        pressed1 = true;
-        polyIndex++;
-        if (polyIndex > 2){
-          polyIndex = 0;
+      if (previousButtons != 1){
+        if (menuIndex > 0){
+          menuIndex--;
+        } else {
+          menuIndex = MENUS -1;
         }
-        polyphony = polyValue[polyIndex];
-        sprintf(buffer, "POLY %d", polyphony);
-        tm.displayText(buffer);
       }
       break;
     case 2 :
-      if (!pressed2){
-        pressed2 = true;
-        if (detuneToggle == 1) {
-          detuneToggle = 2;
+      if (previousButtons != 2){
+        if (menuIndex < MENUS - 1){
+          menuIndex++;
         } else {
-          detuneToggle = 1;
+          menuIndex = 0;
         }
-        sprintf(buffer, "DETUNE %d", detuneToggle);
-        tm.displayText(buffer);
       }
       break;
     case 4 :
-      if (!pressed4){
-        delay(300);
-        pressed4 = true;
+      if (config[menuIndex] > configMin[menuIndex]){
+        config[menuIndex]--;
       }
-      if (detuneToggle == 1){
-        detune1--;
-        si5351.set_freq(100 * FREQUENCY + 100 * detune1, SI5351_CLK1);
-      } else{
-        detune2--;
-        si5351.set_freq(100 * FREQUENCY + 100 * detune2, SI5351_CLK2);
-      }
-      sprintf(buffer, "%d %d", detune1, detune2);
-      tm.displayText(buffer);
       break;
     case 8 :
-      if (!pressed8){
-        delay(300);
-        pressed8 = true;
+      if (config[menuIndex] < configMax[menuIndex]){
+        config[menuIndex]++;
       }
-      if (detuneToggle == 1){
-        detune1++;
-        si5351.set_freq(100 * FREQUENCY + 100 * detune1, SI5351_CLK1);
-      } else{
-        detune2++;
-        si5351.set_freq(100 * FREQUENCY + 100 * detune2, SI5351_CLK2);
-      }
-      sprintf(buffer, "%d %d", detune1, detune2);
-      tm.displayText(buffer);
-      break;
-    case 12: //buttons 4 and 8 at the same time
-      detune1 = 0;
-      detune2 = 0;
-      si5351.set_freq(100 * FREQUENCY, SI5351_CLK1);
-      si5351.set_freq(100 * FREQUENCY, SI5351_CLK2);
-      tm.displayText("DET RST");
-      delay(300);
       break;
     case 64 :
       tm.sendCommand(ACTIVATE);
@@ -354,7 +325,35 @@ void readButtons(){
       tm.sendCommand(DISPLAY_OFF);
       break;
     }
+    if (buttons < 16){
+        sprintf(buffer, "%s %d", menuTable[menuIndex], config[menuIndex]);
+        tm.displayText(buffer);
+    }
+    if (buttons > 2 && buttons < 16){
+      switch (menuIndex) {
+        case 0 : //midi channel
+          break;
+        case 1 : //poly
+          polyphony = polyValue[config[1]];
+          break;
+        case 2 : //detune0
+          si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[2], SI5351_CLK0);
+          break;
+        case 3 : //detune1
+          si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[3], SI5351_CLK1);
+          break;
+        case 4 : //detune2
+          si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[4], SI5351_CLK2);
+          break;
+      }
+      if (previousButtons != buttons) {
+        delay(KEY_LONG_DELAY);
+      } else {
+        delay(KEY_SHORT_DELAY);
+      }
+    }
   }
+  previousButtons = buttons;
 }
 
 void setup()
@@ -366,12 +365,8 @@ void setup()
   if(!i2c_found)
   {
     //Serial.println("Device not found on I2C bus!");
-  } else {
-    //Serial.println("YES! Device found on I2C bus!");
   }
 
-  // Set CLK0 to output 3.99 MHz
-  //si5351.set_freq(399999990ULL, SI5351_CLK0);
   si5351.set_freq(100 * FREQUENCY, SI5351_CLK0);
   si5351.set_freq(101 * FREQUENCY, SI5351_CLK1);
   si5351.set_freq(102 * FREQUENCY, SI5351_CLK2);
@@ -398,20 +393,17 @@ void setup()
 
   tm.setLED(4, true);
   mySN76489.setAttenuation(0, 0xF);
-  //digitalWrite(PIN_NotCE0, true);
 
   MIDI.begin(MIDI_CHANNEL_OMNI);
-  polyphony = 3;
   for (byte i = 0; i < 8; i++ ){
     tm.setLED(i, false);
   }
   AllOff();
-  detune1 = 0;
-  detune2 = 0;
-  numberOfNotes = 0;
   MIDI.setHandleNoteOn(handleNoteOn);
   MIDI.setHandleNoteOff(handleNoteOff);
   MIDI.setHandlePitchBend(handlePitchBend);
+
+  polyphony = polyValue[config[1]];
 }
 
 void loop()
