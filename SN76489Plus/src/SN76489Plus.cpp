@@ -39,7 +39,8 @@
 
 //#define FREQUENCY 4286819ULL
 #define FREQUENCY 2143409ULL 
-#define DETUNE_FACTOR 500000
+#define DETUNE_FACTOR 500000ULL
+#define PITCH_FACTOR 25000ULL
 #define GATE 13
 
 #define PIN_NotCE0 8
@@ -274,13 +275,18 @@ void handleNoteOff(byte channel, byte pitch, byte velocity){
 }
 
 void handlePitchBend(byte channel, int bend){
-  //TODO for all SN...; respect detune
-  int normalizedBend = bend - 64;
-  if (normalizedBend > 0){
-    si5351.set_freq(100 * FREQUENCY + normalizedBend * 10 * FREQUENCY / 64, SI5351_CLK0);
+  sprintf(buffer, "%d", bend);
+  tm.displayText(buffer);
+
+  long pitchBend;
+  if (bend >= 0) {
+    pitchBend = PITCH_FACTOR * (bend);
   } else {
-    si5351.set_freq(100 * FREQUENCY + normalizedBend * 100000, SI5351_CLK0);
+    pitchBend = (PITCH_FACTOR * (bend)) >> 1;
   }
+  si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[2] + pitchBend, SI5351_CLK0);
+  si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[3] + pitchBend, SI5351_CLK1);
+  si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[4] + pitchBend, SI5351_CLK2);
 }
 
 void readButtons(){
@@ -359,7 +365,7 @@ void readButtons(){
 void setup()
 {
   bool i2c_found;
-  //Serial.begin(115200);
+  //Serial.begin(9600);
   //Serial.println("");
   i2c_found = si5351.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
   if(!i2c_found)
