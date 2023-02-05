@@ -386,6 +386,9 @@ void readButtons(){
       AllOff();
       tm.sendCommand(DISPLAY_OFF);
       break;
+    case 192 :
+      EEPROM.write(0, 255); //reset to factory defaults on next reboot
+      break;
     }
     if (buttons < 16){
         sprintf(buffer, "%s %d", menuTable[menuIndex], config[menuIndex]);
