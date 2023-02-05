@@ -14,6 +14,7 @@
  */
 
 #include <Arduino.h>
+#include <EEPROM.h>
 #include "si5351.h"
 #include "Wire.h"
 #include "SN76489.h"
@@ -103,17 +104,21 @@ volatile byte notesInOrder[MAX_NOTES];
 char buffer[9];
 uint8_t previousButtons = 0;
 
-#define MENUS 5
+#define MAX_CONFIGS 16
+#define MENUS 6
 byte menuIndex = 0;
 const char menu_0[] = "CH";
 const char menu_1[] = "PO";
 const char menu_2[] = "D0";
 const char menu_3[] = "D1";
 const char menu_4[] = "D2";
-const char *const menuTable[] = {menu_0, menu_1, menu_2, menu_3, menu_4};
-int config[MENUS] =     { 0, 1,    0,    0, 0};
-const int configMin[] = { 0, 0, -100, -100, -100};
-const int configMax[] = {15, 2,  100,  100,  100};
+const char menu_5[] = "CF";
+const char *const menuTable[] = {menu_0, menu_1, menu_2, menu_3, menu_4, menu_5};
+int config[MENUS] =     { 0, 1,    0,    0,    0, 0};
+int configInEeprom[MENUS - 1];
+const int configMin[] = { 0, 0, -100, -100, -100, 0};
+const int configMax[] = {15, 2,  100,  100,  100, 15};
+byte whichConfig;
 
 void displayNoteOn(int input1, int input2, int msg){
   //sprintf(buffer, "* %d %d %d", input1, input2, msg);
@@ -289,6 +294,25 @@ void handlePitchBend(byte channel, int bend){
   si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[4] + pitchBend, SI5351_CLK2);
 }
 
+void writeConfig(){
+    int configInEeprom[MENUS - 1];
+    byte whichConfig = config[MENUS - 1];
+    EEPROM.write(0, whichConfig);
+    for (byte i = 0; i < MENUS - 1; i++){
+      configInEeprom[i] = config[i];
+    }
+    EEPROM.put(1, configInEeprom);
+}
+
+void readConfig(){
+  int configInEeprom[MENUS - 1];
+  EEPROM.get(1 + config[MENUS - 1] * sizeof(configInEeprom), configInEeprom);
+  for (byte i = 0; i < MENUS - 1; i++){
+    config[i] = configInEeprom[i];
+  }
+  config[MENUS - 1] = EEPROM.read(0);
+}
+
 void readButtons(){
   uint8_t buttons = tm.readButtons();
   if (buttons > 0) {
@@ -322,6 +346,12 @@ void readButtons(){
       if (config[menuIndex] < configMax[menuIndex]){
         config[menuIndex]++;
       }
+      break;
+    case 16 :
+      readConfig();
+      break;
+    case 32 :
+      writeConfig();
       break;
     case 64 :
       tm.sendCommand(ACTIVATE);
@@ -362,8 +392,22 @@ void readButtons(){
   previousButtons = buttons;
 }
 
+void restoreFactoryDefaults(){
+    for (byte i = MAX_CONFIGS -1; i >= 0; i--){
+    config[MENUS - 1] = i;
+    writeConfig();
+  }
+}
+
 void setup()
 {
+  byte tmp;
+  EEPROM.get(0, tmp);
+  if (tmp >= MAX_CONFIGS) {
+    restoreFactoryDefaults();
+  }
+  readConfig();
+  
   bool i2c_found;
   //Serial.begin(9600);
   //Serial.println("");
