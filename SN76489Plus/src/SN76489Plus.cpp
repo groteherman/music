@@ -313,6 +313,32 @@ void readConfig(){
   config[MENUS - 1] = EEPROM.read(0);
 }
 
+void deployConfig(byte index){
+    switch (index) {
+    case 0 : //midi channel
+      MIDI.begin((byte)config[0]);
+      break;
+    case 1 : //poly
+      polyphony = polyValue[config[1]];
+      break;
+    case 2 : //detune0
+      si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[2], SI5351_CLK0);
+      break;
+    case 3 : //detune1
+      si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[3], SI5351_CLK1);
+      break;
+    case 4 : //detune2
+      si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[4], SI5351_CLK2);
+      break;
+  }
+}
+
+void deployAllConfig(){
+  for (byte i = 0; i < 5; i++){
+    deployConfig(i);
+  }
+}
+
 void readButtons(){
   uint8_t buttons = tm.readButtons();
   if (buttons > 0) {
@@ -366,22 +392,7 @@ void readButtons(){
         tm.displayText(buffer);
     }
     if (buttons > 2 && buttons < 16){
-      switch (menuIndex) {
-        case 0 : //midi channel
-          break;
-        case 1 : //poly
-          polyphony = polyValue[config[1]];
-          break;
-        case 2 : //detune0
-          si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[2], SI5351_CLK0);
-          break;
-        case 3 : //detune1
-          si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[3], SI5351_CLK1);
-          break;
-        case 4 : //detune2
-          si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[4], SI5351_CLK2);
-          break;
-      }
+      deployConfig(menuIndex);
       if (previousButtons != buttons) {
         delay(KEY_LONG_DELAY);
       } else {
@@ -416,16 +427,9 @@ void setup()
   {
     //Serial.println("Device not found on I2C bus!");
   }
-
-  si5351.set_freq(100 * FREQUENCY, SI5351_CLK0);
-  si5351.set_freq(101 * FREQUENCY, SI5351_CLK1);
-  si5351.set_freq(102 * FREQUENCY, SI5351_CLK2);
-
   pinMode(PIN_NotCE0, OUTPUT); 
   pinMode(PIN_NotCE1, OUTPUT); 
   pinMode(PIN_NotCE2, OUTPUT); 
-
-  //AllOff();
   pinMode(GATE, OUTPUT); 
   digitalWrite(GATE, false);
 
@@ -444,7 +448,6 @@ void setup()
   tm.setLED(4, true);
   mySN76489.setAttenuation(0, 0xF);
 
-  MIDI.begin(MIDI_CHANNEL_OMNI);
   for (byte i = 0; i < 8; i++ ){
     tm.setLED(i, false);
   }
@@ -453,6 +456,7 @@ void setup()
   MIDI.setHandleNoteOff(handleNoteOff);
   MIDI.setHandlePitchBend(handlePitchBend);
 
+  deployAllConfig();
   polyphony = polyValue[config[1]];
 }
 
