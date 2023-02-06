@@ -171,8 +171,6 @@ void noteOff(byte index){
 }
 
 void AllOff(){
-  strcpy(buffer, "ALL OFF");
-  tm.displayText(buffer);
   digitalWrite(PIN_NotCE0, false);
   digitalWrite(PIN_NotCE1, false);
   digitalWrite(PIN_NotCE2, false);
@@ -415,6 +413,8 @@ void restoreFactoryDefaults(){
 
 void setup()
 {
+  sprintf(buffer, "3SN76489");
+  tm.displayText(buffer);
   byte tmp;
   EEPROM.get(0, tmp);
   if (tmp >= MAX_CONFIGS) {
