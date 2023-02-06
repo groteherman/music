@@ -9,4 +9,4 @@ As an IDE I used Visual Studio Code with the PlatformIO plugin. To get started I
 [TM1638lite library](https://github.com/danja/TM1638lite)
 
 I intend to properly use these libraries as libraries. I added the SN76489::setDivider method to be able to set exact pre-calculated divisors for each note
-so there is no need for float-arithmatic.
+so there is no need for float-arithmetic.
