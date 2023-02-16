@@ -5,8 +5,9 @@ This creates the possibility to detune the second en third SN76489 with respect 
 
 As an IDE I used Visual Studio Code with the PlatformIO plugin. To get started I made copies of
 [MIDI library](https://github.com/FortySevenEffects/arduino_midi_library), 
-[Si5351 library](https://github.com/etherkit/Si5351Arduino) and 
-[TM1638lite library](https://github.com/danja/TM1638lite)
+[Si5351 library](https://github.com/etherkit/Si5351Arduino),
+[TM1638lite library](https://github.com/danja/TM1638lite) and
+[SN76489 library](https://github.com/tyrkelko/sn76489)
 
 I intend to properly use these libraries as libraries. I added the SN76489::setDivider method to be able to set exact pre-calculated divisors for each note
-so there is no need for float-arithmatic.
+so there is no need for float-arithmetic.
