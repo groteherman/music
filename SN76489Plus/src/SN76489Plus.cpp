@@ -458,7 +458,6 @@ void setup()
   MIDI.setHandlePitchBend(handlePitchBend);
 
   deployAllConfig();
-  polyphony = polyValue[config[1]];
 }
 
 void loop()
