@@ -40,7 +40,7 @@
 
 //#define FREQUENCY 4286819ULL
 #define FREQUENCY 2143409ULL 
-#define DETUNE_FACTOR 1071704ULL //FREQ / 2
+#define DETUNE_FACTOR 107170ULL //FREQ / 20
 #define PITCH_FACTOR 26167ULL //100 * FREQ / 8191
 #define GATE 13
 
@@ -413,13 +413,14 @@ void setup()
 {
   sprintf(buffer, "3SN76489");
   tm.displayText(buffer);
+/*
   byte tmp;
   EEPROM.get(0, tmp);
   if (tmp >= MAX_CONFIGS) {
     restoreFactoryDefaults();
   }
   readConfig();
-  
+*/  
   bool i2c_found;
   //Serial.begin(9600);
   //Serial.println("");
