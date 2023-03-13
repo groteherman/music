@@ -186,9 +186,11 @@ void AllOff(){
     notesInOrder[i] = 0;
   }
   numberOfNotes = 0;
+  digitalWrite(GATE, false);
 }
 
 void handleNotesPlaying(){
+  digitalWrite(GATE, false);
   int firstNote = numberOfNotes - polyphony;
   if (firstNote < 0){
     firstNote = 0;
@@ -219,6 +221,7 @@ void handleNotesPlaying(){
         if (notesPlaying[j] == 0){
           notesPlaying[j] = notesInOrder[i];
           noteOn(j, notesPlaying[j]);
+          digitalWrite(GATE, true);
           break;
         }
       }
@@ -238,9 +241,6 @@ void handleNoteOn(byte channel, byte pitch, byte velocity){
     if (!noteFound) {
       if (numberOfNotes < MAX_NOTES) {
         notesInOrder[numberOfNotes++] = pitch;
-        if (numberOfNotes == 1){
-          digitalWrite(GATE, true);
-        }
       } else {
         //alles 1 opschuiven
         for (byte i = 0; i < MAX_NOTES - 1; i++){
@@ -267,9 +267,6 @@ void handleNoteOff(byte channel, byte pitch, byte velocity){
     }
     if (noteFound){
       numberOfNotes--;
-    }
-    if (numberOfNotes == 0){
-      digitalWrite(GATE, false);
     }
     handleNotesPlaying();
   }
@@ -433,7 +430,6 @@ void setup()
   pinMode(PIN_NotCE1, OUTPUT); 
   pinMode(PIN_NotCE2, OUTPUT); 
   pinMode(GATE, OUTPUT); 
-  digitalWrite(GATE, false);
 
   tm.setLED(1, true);
   digitalWrite(PIN_NotCE0, false);
