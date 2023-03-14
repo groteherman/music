@@ -190,7 +190,6 @@ void AllOff(){
 }
 
 void handleNotesPlaying(){
-  digitalWrite(GATE, false);
   int firstNote = numberOfNotes - polyphony;
   if (firstNote < 0){
     firstNote = 0;
@@ -205,7 +204,8 @@ void handleNotesPlaying(){
     }
     if (turnOff && notesPlaying[j] != 0){
       notesPlaying[j] = 0;
-      noteOff(j);
+      digitalWrite(GATE, false);
+      //noteOff(j);
     }
   }
   for(byte i = firstNote; i < numberOfNotes; i++){
@@ -219,6 +219,7 @@ void handleNotesPlaying(){
     if (!isPlaying){
       for (byte j = 0; j < polyphony; j++){
         if (notesPlaying[j] == 0){
+          digitalWrite(GATE, false);
           notesPlaying[j] = notesInOrder[i];
           noteOn(j, notesPlaying[j]);
           digitalWrite(GATE, true);
