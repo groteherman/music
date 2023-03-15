@@ -204,9 +204,11 @@ void handleNotesPlaying(){
     }
     if (turnOff && notesPlaying[j] != 0){
       notesPlaying[j] = 0;
-      digitalWrite(GATE, false);
       //noteOff(j);
     }
+  }
+  if (numberOfNotes == 0){
+    digitalWrite(GATE, false);
   }
   for(byte i = firstNote; i < numberOfNotes; i++){
     bool isPlaying = false;
@@ -314,6 +316,7 @@ void deployConfig(byte index){
       break;
     case 1 : //poly
       polyphony = polyValue[config[1]];
+      AllOff();
       break;
     case 2 : //detune0
       si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[2], SI5351_CLK0);
