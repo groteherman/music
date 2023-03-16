@@ -186,6 +186,7 @@ void AllOff(){
     notesInOrder[i] = 0;
   }
   numberOfNotes = 0;
+  digitalWrite(GATE, false);
 }
 
 void handleNotesPlaying(){
@@ -203,8 +204,11 @@ void handleNotesPlaying(){
     }
     if (turnOff && notesPlaying[j] != 0){
       notesPlaying[j] = 0;
-      noteOff(j);
+      //noteOff(j);
     }
+  }
+  if (numberOfNotes == 0){
+    digitalWrite(GATE, false);
   }
   for(byte i = firstNote; i < numberOfNotes; i++){
     bool isPlaying = false;
@@ -217,8 +221,10 @@ void handleNotesPlaying(){
     if (!isPlaying){
       for (byte j = 0; j < polyphony; j++){
         if (notesPlaying[j] == 0){
+          digitalWrite(GATE, false);
           notesPlaying[j] = notesInOrder[i];
           noteOn(j, notesPlaying[j]);
+          digitalWrite(GATE, true);
           break;
         }
       }
@@ -238,9 +244,6 @@ void handleNoteOn(byte channel, byte pitch, byte velocity){
     if (!noteFound) {
       if (numberOfNotes < MAX_NOTES) {
         notesInOrder[numberOfNotes++] = pitch;
-        if (numberOfNotes == 1){
-          digitalWrite(GATE, true);
-        }
       } else {
         //alles 1 opschuiven
         for (byte i = 0; i < MAX_NOTES - 1; i++){
@@ -267,9 +270,6 @@ void handleNoteOff(byte channel, byte pitch, byte velocity){
     }
     if (noteFound){
       numberOfNotes--;
-    }
-    if (numberOfNotes == 0){
-      digitalWrite(GATE, false);
     }
     handleNotesPlaying();
   }
@@ -316,6 +316,7 @@ void deployConfig(byte index){
       break;
     case 1 : //poly
       polyphony = polyValue[config[1]];
+      AllOff();
       break;
     case 2 : //detune0
       si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[2], SI5351_CLK0);
@@ -433,7 +434,6 @@ void setup()
   pinMode(PIN_NotCE1, OUTPUT); 
   pinMode(PIN_NotCE2, OUTPUT); 
   pinMode(GATE, OUTPUT); 
-  digitalWrite(GATE, false);
 
   tm.setLED(1, true);
   digitalWrite(PIN_NotCE0, false);
