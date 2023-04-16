@@ -290,6 +290,26 @@ void handlePitchBend(byte channel, int bend){
   si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[4] + pitchBend, SI5351_CLK2);
 }
 
+void handleControlChange(byte channel, byte byte1, byte byte2){
+  sprintf(buffer, "CC %d %d", byte1, byte2);
+  tm.displayText(buffer);
+
+  switch (byte1) {
+    case 41 : //Novation detune
+        config[2] = byte2 - 64;
+        si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[2], SI5351_CLK0);
+        break;
+    case 72 : //Novation level
+        config[3] = byte2 - 64;
+        si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[3], SI5351_CLK0);
+        break;
+    case 45 : //Novation pwm
+        config[4] = byte2 - 64;
+        si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[4], SI5351_CLK0);
+        break;
+    }
+}
+
 void writeConfig(){
     int configInEeprom[MENUS - 1];
     byte whichConfig = config[MENUS - 1];
@@ -457,6 +477,7 @@ void setup()
   MIDI.setHandleNoteOn(handleNoteOn);
   MIDI.setHandleNoteOff(handleNoteOff);
   MIDI.setHandlePitchBend(handlePitchBend);
+  MIDI.setHandleControlChange(handleControlChange);
 
   deployAllConfig();
 }
