@@ -112,7 +112,7 @@ const char menu_3[] = "D1";
 const char menu_4[] = "D2";
 const char menu_5[] = "CF";
 const char *const menuTable[] = {menu_0, menu_1, menu_2, menu_3, menu_4, menu_5};
-int config[MENUS] =     { 0, 1,    0,    0,    0, 0};
+int config[MENUS] =     { 0, 0,    0,    0,    0, 0};
 int configInEeprom[MENUS - 1];
 const int configMin[] = { 0, 0, -100, -100, -100, 0};
 const int configMax[] = {15, 2,  100,  100,  100, 15};
@@ -291,7 +291,7 @@ void handlePitchBend(byte channel, int bend){
 }
 
 void handleControlChange(byte channel, byte byte1, byte byte2){
-  sprintf(buffer, "CC %d %d", byte1, byte2);
+  sprintf(buffer, "CC%d %d", byte1, byte2);
   tm.displayText(buffer);
 
   switch (byte1) {
