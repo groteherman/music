@@ -80,13 +80,15 @@ int mod(int a, int b)
 }
 
 void commandNote(int noteMsg) {
-  digitalWrite(GATE,HIGH);
+  digitalWrite(GATE,LOW);
   digitalWrite(TRIG,HIGH);
   trigTimer = millis();
   
   //unsigned int mV = (unsigned int) ((float) noteMsg * NOTE_SF + 0.5); 
   unsigned int mV = (unsigned int) (noteMsg - 21) * 35; //was 69 zonder opamp
   setVoltage(DAC1, 0, 0, mV);  // DAC1, channel 0, gain = 1X
+  delay(1);
+  digitalWrite(GATE,HIGH);
 }
 
 void commandLastNote()
