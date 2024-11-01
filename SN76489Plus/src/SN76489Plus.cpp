@@ -14,7 +14,6 @@
  */
 
 #include <Arduino.h>
-#include <EEPROM.h>
 #include "si5351.h"
 #include "Wire.h"
 #include "SN76489.h"
@@ -43,6 +42,10 @@
 #define PITCH_FACTOR 26167ULL //100 * FREQ / 8191
 #define GATE 13
 
+#define NOVATION_DETUNE 41
+#define NOVATION_LEVEL 72
+#define NOVATION_PWM 45
+
 #define PIN_NotCE0 8
 #define PIN_NotCE1 2
 #define PIN_NotCE2 14
@@ -68,9 +71,6 @@ SN76489 mySN76489 = SN76489(PIN_NotWE, PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_D4, P
 byte whichSN[3] = {PIN_NotCE0, PIN_NotCE1, PIN_NotCE2};
 
 Si5351 si5351;
-byte polyValue[3] = {1, 3, 9};
-byte polyphony;
-
 MIDI_CREATE_DEFAULT_INSTANCE();
 
 #define MIDI_NUMBER 53
@@ -91,27 +91,82 @@ uint16_t noteDiv[MIDI_NUMBER] = {
 volatile byte numberOfNotes = 0;
 volatile byte notesPlaying[MAX_POLYPHONY];
 volatile byte notesInOrder[MAX_NOTES];
-char buffer[9];
-uint8_t previousButtons = 0;
 
-#define MAX_CONFIGS 16
-#define MENUS 6
-byte menuIndex = 0;
-const char menu_0[] = "CH";
-const char menu_1[] = "PO";
-const char menu_2[] = "D0";
-const char menu_3[] = "D1";
-const char menu_4[] = "D2";
-const char menu_5[] = "CF";
-const char *const menuTable[] = {menu_0, menu_1, menu_2, menu_3, menu_4, menu_5};
-int config[MENUS] =     { 0, 0,    0,    0,    0, 0};
-int configInEeprom[MENUS - 1];
-const int configMin[] = { 0, 0, -100, -100, -100, 0};
-const int configMax[] = {15, 2,  100,  100,  100, 15};
-byte whichConfig;
+#define MAX_PROGRAMCONFIGS 4
+
+class ProgramConfig {
+  private:
+    byte MidiChannel;
+    byte Polyphony;
+    int Detune0;
+    int Detune1;
+    int Detune2;
+
+    int DetermineDetune(int detune){
+      if (detune > 100){
+        return 100;
+      } else if (detune < -100) {
+        return -100;
+      } else {
+        return detune;
+      }
+    }
+
+  public:
+    void SetMidiChannel(byte channel){
+      MidiChannel = min(channel, 15);
+    }
+    byte GetMidiChannel(){
+      return MidiChannel;
+    }
+
+    void SetPolyphony(byte poly){
+      if (poly == 9) {
+        Polyphony = 9;
+      } else if (poly == 3){
+        Polyphony = 3;
+      } else {
+        Polyphony = 1;
+      }
+    }
+    byte GetPolyphony(){
+      return Polyphony;
+    }
+
+    void SetDetune0(int detune){
+      Detune0 = DetermineDetune(detune);
+    }
+    int GetDetune0(){
+      return Detune0;
+    }
+
+    void SetDetune1(int detune){
+      Detune1 = DetermineDetune(detune);
+    }
+    int GetDetune1(){
+      return Detune1;
+    }
+
+    void SetDetune2(int detune){
+      Detune2 = DetermineDetune(detune);
+    }
+    int GetDetune2(){
+      return Detune2;
+    }
+
+    ProgramConfig(byte midiChannel, byte polyphony, int detune0, int detune1, int detune2){
+      SetMidiChannel(midiChannel);
+      SetPolyphony(polyphony);
+      SetDetune0(detune0);
+      SetDetune1(detune1);
+      SetDetune2(detune2);
+    }
+};
+
+ProgramConfig Program = ProgramConfig(1, 1, 0, 0, 0);
 
 void noteOn(byte index, byte msg){
-  if (polyphony > 3){
+  if (Program.GetPolyphony() > 3){
     digitalWrite(whichSN[index % 3], false);
     mySN76489.setDivider(index / 3, noteDiv[msg - MIDI_LOW]);
     mySN76489.setAttenuation(index / 3, 0x0);
@@ -129,7 +184,7 @@ void noteOn(byte index, byte msg){
 }
 
 void noteOff(byte index){
-  if (polyphony > 3){
+  if (Program.GetPolyphony() > 3){
     digitalWrite(whichSN[index % 3], false);
     mySN76489.setAttenuation(index / 3, 0xf);
     digitalWrite(whichSN[index % 3], true);
@@ -166,11 +221,11 @@ void AllOff(){
 }
 
 void handleNotesPlaying(){
-  int firstNote = numberOfNotes - polyphony;
+  int firstNote = numberOfNotes - Program.GetPolyphony();
   if (firstNote < 0){
     firstNote = 0;
   }
-  for (byte j = 0; j < polyphony; j++){
+  for (byte j = 0; j < Program.GetPolyphony(); j++){
     bool turnOff = true;
     for(byte i = firstNote; i < numberOfNotes; i++){
       if (notesPlaying[j] == notesInOrder[i] && notesPlaying[j] != 0){
@@ -188,14 +243,14 @@ void handleNotesPlaying(){
   }
   for(byte i = firstNote; i < numberOfNotes; i++){
     bool isPlaying = false;
-    for (byte j = 0; j < polyphony; j++){
+    for (byte j = 0; j < Program.GetPolyphony(); j++){
       if (notesPlaying[j] == notesInOrder[i]){
         isPlaying = true;
         break;
       }
     }
     if (!isPlaying){
-      for (byte j = 0; j < polyphony; j++){
+      for (byte j = 0; j < Program.GetPolyphony(); j++){
         if (notesPlaying[j] == 0){
           digitalWrite(GATE, false);
           notesPlaying[j] = notesInOrder[i];
@@ -258,92 +313,45 @@ void handlePitchBend(byte channel, int bend){
   } else {
     pitchBend = (PITCH_FACTOR * (bend)) >> 1;
   }
-  si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[2] + pitchBend, SI5351_CLK0);
-  si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[3] + pitchBend, SI5351_CLK1);
-  si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[4] + pitchBend, SI5351_CLK2);
+  si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * Program.GetDetune0() + pitchBend, SI5351_CLK0);
+  si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * Program.GetDetune1() + pitchBend, SI5351_CLK1);
+  si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * Program.GetDetune2() + pitchBend, SI5351_CLK2);
 }
 
 void handleControlChange(byte channel, byte byte1, byte byte2){
   switch (byte1) {
-    case 41 : //Novation detune
-        config[2] = byte2 - 64;
-        si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[2], SI5351_CLK0);
+    case NOVATION_DETUNE :
+        Program.SetDetune0(byte2 - 64);
+        si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * Program.GetDetune0(), SI5351_CLK0);
         break;
-    case 72 : //Novation level
-        config[3] = byte2 - 64;
-        si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[3], SI5351_CLK0);
+    case NOVATION_LEVEL :
+        Program.SetDetune1(byte2 - 64);
+        si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * Program.GetDetune1(), SI5351_CLK1);
         break;
-    case 45 : //Novation pwm
-        config[4] = byte2 - 64;
-        si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[4], SI5351_CLK0);
+    case NOVATION_PWM :
+        Program.SetDetune2(byte2 - 64);
+        si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * Program.GetDetune2(), SI5351_CLK2);
         break;
     }
 }
 
-void writeConfig(){
-    int configInEeprom[MENUS - 1];
-    byte whichConfig = config[MENUS - 1];
-    EEPROM.write(0, whichConfig);
-    for (byte i = 0; i < MENUS - 1; i++){
-      configInEeprom[i] = config[i];
-    }
-    EEPROM.put(1, configInEeprom);
-}
-
-void readConfig(){
-  int configInEeprom[MENUS - 1];
-  EEPROM.get(1 + config[MENUS - 1] * sizeof(configInEeprom), configInEeprom);
-  for (byte i = 0; i < MENUS - 1; i++){
-    config[i] = configInEeprom[i];
+void handleProgramChange(byte channel, byte program){
+  switch (program) {
+    case 0 :
+      Program = ProgramConfig(1, 1, 0, 0, 0);
+    case 1 :
+      Program = ProgramConfig(1, 3, 0, 0, 0);
+    case 2 :
+      Program = ProgramConfig(1, 9, 0, 0, 0);
   }
-  config[MENUS - 1] = EEPROM.read(0);
-}
-
-void deployConfig(byte index){
-    switch (index) {
-    case 0 : //midi channel
-      MIDI.begin((byte)config[0]);
-      break;
-    case 1 : //poly
-      polyphony = polyValue[config[1]];
-      AllOff();
-      break;
-    case 2 : //detune0
-      si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[2], SI5351_CLK0);
-      break;
-    case 3 : //detune1
-      si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[3], SI5351_CLK1);
-      break;
-    case 4 : //detune2
-      si5351.set_freq(100 * FREQUENCY + DETUNE_FACTOR * config[4], SI5351_CLK2);
-      break;
-  }
-}
-
-void deployAllConfig(){
-  for (byte i = 0; i < 5; i++){
-    deployConfig(i);
-  }
-}
-
-void restoreFactoryDefaults(){
-    for (byte i = MAX_CONFIGS -1; i >= 0; i--){
-    config[MENUS - 1] = i;
-    writeConfig();
-  }
+  handleControlChange(Program.GetMidiChannel(), NOVATION_DETUNE, 64);
+  handleControlChange(Program.GetMidiChannel(), NOVATION_LEVEL, 64);
+  handleControlChange(Program.GetMidiChannel(), NOVATION_PWM, 64);
+  AllOff();
 }
 
 void setup()
 {
-/*
-  //EEPROM.write(0, 255); //reset to factory defaults on next reboot
-  byte tmp;
-  EEPROM.get(0, tmp);
-  if (tmp >= MAX_CONFIGS) {
-    restoreFactoryDefaults();
-  }
-  readConfig();
-*/  
   bool i2c_found;
   //Serial.begin(9600);
   //Serial.println("");
@@ -371,8 +379,7 @@ void setup()
   MIDI.setHandleNoteOff(handleNoteOff);
   MIDI.setHandlePitchBend(handlePitchBend);
   MIDI.setHandleControlChange(handleControlChange);
-
-  deployAllConfig();
+  MIDI.setHandleProgramChange(handleProgramChange);
 }
 
 void loop()
