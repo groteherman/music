@@ -19,7 +19,6 @@
 #include "Wire.h"
 #include "SN76489.h"
 #include "Midi.h"
-#include "TM1638lite.h"
 
 /***************************************************************************
 ***** Directly interface SN76489 IC with the following PIN definitions *****
@@ -58,22 +57,17 @@
 #define PIN_D6 4
 #define PIN_D7 3
 
-#define TM_STROBE 15
-#define TM_CLOCK 16
-#define TM_DATA 17
-
 //impliciet bij een NANO
 //Si5351_SDA 18; A4
 //Si5351_SCL 19; A5
 //MIDI_IN RX 0
 
-//pins not used: 1 (TX) A6 and A7 (analogue in only)
+//pins not used: 1 (TX) A6 and A7 (analogue in only), 15, 16, 17 (used before by TM1638)
 
 SN76489 mySN76489 = SN76489(PIN_NotWE, PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_D4, PIN_D5, PIN_D6, PIN_D7, FREQUENCY);
 byte whichSN[3] = {PIN_NotCE0, PIN_NotCE1, PIN_NotCE2};
 
 Si5351 si5351;
-TM1638lite tm(TM_STROBE, TM_CLOCK, TM_DATA);
 byte polyValue[3] = {1, 3, 9};
 byte polyphony;
 
@@ -93,8 +87,6 @@ uint16_t noteDiv[MIDI_NUMBER] = {
 
 #define MAX_POLYPHONY 9
 #define MAX_NOTES 10
-#define KEY_LONG_DELAY 500
-#define KEY_SHORT_DELAY 10
 
 volatile byte numberOfNotes = 0;
 volatile byte notesPlaying[MAX_POLYPHONY];
@@ -118,25 +110,12 @@ const int configMin[] = { 0, 0, -100, -100, -100, 0};
 const int configMax[] = {15, 2,  100,  100,  100, 15};
 byte whichConfig;
 
-void displayNoteOn(int input1, int input2, int msg){
-  //sprintf(buffer, "* %d %d %d", input1, input2, msg);
-  //tm.displayText(buffer);
-  tm.setLED(input1, true);
-}
-
-void displayNoteOff(int input1, int input2){
-  //sprintf(buffer, "- %d %d", input1, input2);
-  //tm.displayText(buffer);
-  tm.setLED(input1, false);
-}
-
 void noteOn(byte index, byte msg){
   if (polyphony > 3){
     digitalWrite(whichSN[index % 3], false);
     mySN76489.setDivider(index / 3, noteDiv[msg - MIDI_LOW]);
     mySN76489.setAttenuation(index / 3, 0x0);
     digitalWrite(whichSN[index % 3], true);
-    displayNoteOn(index, index /3, msg);
   } else {
     digitalWrite(whichSN[0], false);
     digitalWrite(whichSN[1], false);
@@ -146,7 +125,6 @@ void noteOn(byte index, byte msg){
     digitalWrite(whichSN[0], true);
     digitalWrite(whichSN[1], true);
     digitalWrite(whichSN[2], true);
-    displayNoteOn(index % 3, index /3, msg);
   }
 }
 
@@ -155,7 +133,6 @@ void noteOff(byte index){
     digitalWrite(whichSN[index % 3], false);
     mySN76489.setAttenuation(index / 3, 0xf);
     digitalWrite(whichSN[index % 3], true);
-    displayNoteOff(index, index / 3);
 } else {
     digitalWrite(whichSN[0], false);
     digitalWrite(whichSN[1], false);
@@ -164,7 +141,6 @@ void noteOff(byte index){
     digitalWrite(whichSN[0], true);
     digitalWrite(whichSN[1], true);
     digitalWrite(whichSN[2], true);
-    displayNoteOff(index % 3, index / 3);
   }
 }
 
@@ -276,9 +252,6 @@ void handleNoteOff(byte channel, byte pitch, byte velocity){
 }
 
 void handlePitchBend(byte channel, int bend){
-  sprintf(buffer, "%d", bend);
-  tm.displayText(buffer);
-
   long pitchBend;
   if (bend >= 0) {
     pitchBend = PITCH_FACTOR * (bend);
@@ -291,9 +264,6 @@ void handlePitchBend(byte channel, int bend){
 }
 
 void handleControlChange(byte channel, byte byte1, byte byte2){
-  sprintf(buffer, "CC%d %d", byte1, byte2);
-  tm.displayText(buffer);
-
   switch (byte1) {
     case 41 : //Novation detune
         config[2] = byte2 - 64;
@@ -356,73 +326,6 @@ void deployAllConfig(){
   }
 }
 
-void readButtons(){
-  uint8_t buttons = tm.readButtons();
-  if (buttons > 0) {
-    //sprintf(buffer, "BUT %d", buttons);
-    //tm.displayText(buffer);
-    switch (buttons) {
-    case 1 :
-      if (previousButtons != 1){
-        if (menuIndex > 0){
-          menuIndex--;
-        } else {
-          menuIndex = MENUS -1;
-        }
-      }
-      break;
-    case 2 :
-      if (previousButtons != 2){
-        if (menuIndex < MENUS - 1){
-          menuIndex++;
-        } else {
-          menuIndex = 0;
-        }
-      }
-      break;
-    case 4 :
-      if (config[menuIndex] > configMin[menuIndex]){
-        config[menuIndex]--;
-      }
-      break;
-    case 8 :
-      if (config[menuIndex] < configMax[menuIndex]){
-        config[menuIndex]++;
-      }
-      break;
-    case 16 :
-      readConfig();
-      break;
-    case 32 :
-      writeConfig();
-      break;
-    case 64 :
-      tm.sendCommand(ACTIVATE);
-      break;
-    case 128 :
-      AllOff();
-      tm.sendCommand(DISPLAY_OFF);
-      break;
-    case 192 :
-      EEPROM.write(0, 255); //reset to factory defaults on next reboot
-      break;
-    }
-    if (buttons < 16){
-        sprintf(buffer, "%s %d", menuTable[menuIndex], config[menuIndex]);
-        tm.displayText(buffer);
-    }
-    if (buttons > 2 && buttons < 16){
-      deployConfig(menuIndex);
-      if (previousButtons != buttons) {
-        delay(KEY_LONG_DELAY);
-      } else {
-        delay(KEY_SHORT_DELAY);
-      }
-    }
-  }
-  previousButtons = buttons;
-}
-
 void restoreFactoryDefaults(){
     for (byte i = MAX_CONFIGS -1; i >= 0; i--){
     config[MENUS - 1] = i;
@@ -432,9 +335,8 @@ void restoreFactoryDefaults(){
 
 void setup()
 {
-  sprintf(buffer, "3SN76489");
-  tm.displayText(buffer);
 /*
+  //EEPROM.write(0, 255); //reset to factory defaults on next reboot
   byte tmp;
   EEPROM.get(0, tmp);
   if (tmp >= MAX_CONFIGS) {
@@ -455,24 +357,15 @@ void setup()
   pinMode(PIN_NotCE2, OUTPUT); 
   pinMode(GATE, OUTPUT); 
 
-  tm.setLED(1, true);
   digitalWrite(PIN_NotCE0, false);
   mySN76489.setDivider(0, noteDiv[0]);
   delay(100);
-
-  tm.setLED(2, true);
   mySN76489.setDivider(0, noteDiv[11]);
   delay(100);
-  tm.setLED(3, true);
   mySN76489.setDivider(0, noteDiv[23]);
   delay(100);
-
-  tm.setLED(4, true);
   mySN76489.setAttenuation(0, 0xF);
 
-  for (byte i = 0; i < 8; i++ ){
-    tm.setLED(i, false);
-  }
   AllOff();
   MIDI.setHandleNoteOn(handleNoteOn);
   MIDI.setHandleNoteOff(handleNoteOff);
@@ -485,5 +378,4 @@ void setup()
 void loop()
 {
   MIDI.read();
-  readButtons();
 }
