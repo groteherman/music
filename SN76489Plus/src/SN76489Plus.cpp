@@ -40,7 +40,7 @@
 #define FREQUENCY 2143409ULL 
 #define DETUNE_FACTOR 107170ULL //FREQ / 20
 #define PITCH_FACTOR 26167ULL //100 * FREQ / 8191
-#define GATE 13
+#define GATE 13 //same as LED_BUILTIN
 
 #define NOVATION_DETUNE 41
 #define NOVATION_LEVEL 72
@@ -63,9 +63,9 @@
 //impliciet bij een NANO
 //Si5351_SDA 18; A4
 //Si5351_SCL 19; A5
-//MIDI_IN RX 0
+//MIDI_IN RX 1
 
-//pins not used: 1 (TX) A6 and A7 (analogue in only), 15, 16, 17 (used before by TM1638)
+//pins not used: 0 (TX) A6 and A7 (analogue in only), 15/A1, 16/A2, 17/A3 (used before by TM1638)
 
 SN76489 mySN76489 = SN76489(PIN_NotWE, PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_D4, PIN_D5, PIN_D6, PIN_D7, FREQUENCY);
 byte whichSN[3] = {PIN_NotCE0, PIN_NotCE1, PIN_NotCE2};
@@ -91,8 +91,6 @@ uint16_t noteDiv[MIDI_NUMBER] = {
 volatile byte numberOfNotes = 0;
 volatile byte notesPlaying[MAX_POLYPHONY];
 volatile byte notesInOrder[MAX_NOTES];
-
-#define MAX_PROGRAMCONFIGS 4
 
 class ProgramConfig {
   private:
@@ -355,16 +353,23 @@ void setup()
   bool i2c_found;
   //Serial.begin(9600);
   //Serial.println("");
+  
   i2c_found = si5351.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
   if(!i2c_found)
   {
     //Serial.println("Device not found on I2C bus!");
   }
+
+  si5351.set_freq(100 * FREQUENCY, SI5351_CLK0);
+  si5351.set_freq(100 * FREQUENCY, SI5351_CLK1);
+  si5351.set_freq(100 * FREQUENCY, SI5351_CLK2);
+
   pinMode(PIN_NotCE0, OUTPUT); 
   pinMode(PIN_NotCE1, OUTPUT); 
   pinMode(PIN_NotCE2, OUTPUT); 
   pinMode(GATE, OUTPUT); 
 
+  mySN76489.setAttenuation(0, 0x0);
   digitalWrite(PIN_NotCE0, false);
   mySN76489.setDivider(0, noteDiv[0]);
   delay(100);
@@ -372,14 +377,14 @@ void setup()
   delay(100);
   mySN76489.setDivider(0, noteDiv[23]);
   delay(100);
-  mySN76489.setAttenuation(0, 0xF);
-
   AllOff();
+
   MIDI.setHandleNoteOn(handleNoteOn);
   MIDI.setHandleNoteOff(handleNoteOff);
   MIDI.setHandlePitchBend(handlePitchBend);
   MIDI.setHandleControlChange(handleControlChange);
   MIDI.setHandleProgramChange(handleProgramChange);
+  MIDI.begin(MIDI_CHANNEL_OMNI);
 }
 
 void loop()
