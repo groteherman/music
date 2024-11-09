@@ -12,22 +12,12 @@ char buffer[9];
 TM1638lite tm(TM_STROBE, TM_CLOCK, TM_DATA);
 MIDI_CREATE_DEFAULT_INSTANCE();
 
-void ToTm(byte pitch, byte velocity)
+void ToTm(byte byte0, byte byte1, byte byte2)
 {
   sprintf(buffer, "        ");
   tm.displayText(buffer);
-  sprintf(buffer, "%d %d", pitch, velocity);
+  sprintf(buffer, "%02X %02X %02X", byte0, byte1, byte2);
   tm.displayText(buffer);
-}
-
-void handleNoteOn(byte channel, byte pitch, byte velocity){
-  digitalWrite(LED_BUILTIN, HIGH);
-  ToTm(pitch, velocity);
-}
-
-void handleNoteOff(byte channel, byte pitch, byte velocity){
-  digitalWrite(LED_BUILTIN, LOW);
-  ToTm(pitch, velocity);
 }
 
 void setup() {
@@ -53,12 +43,15 @@ void setup() {
     delay(200);
   }
   
-  MIDI.setHandleNoteOn(handleNoteOn);
-  MIDI.setHandleNoteOff(handleNoteOff);
   MIDI.begin(MIDI_CHANNEL_OMNI);
   digitalWrite(LED_BUILTIN, LOW);
 }
 
 void loop() {
-  MIDI.read();
+  if (MIDI.read()) {                    
+      byte type = MIDI.getType();
+      byte byte1 = MIDI.getData1();
+      byte byte2 = MIDI.getData2();
+      ToTm(type, byte1, byte2);
+  }
 }
