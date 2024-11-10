@@ -14,27 +14,11 @@
  */
 
 #include <Arduino.h>
+#include "ProgramConfig.h"
 #include "si5351.h"
 #include "Wire.h"
 #include "SN76489.h"
 #include "Midi.h"
-
-/***************************************************************************
-***** Directly interface SN76489 IC with the following PIN definitions *****
-***** and by calling 8-bit constractor                                 *****
-***** The SN76489 pinout considered for this library is as follows:    *****
-*****                                                                  *****
-*****                        ========                                  *****
-*****        D2       --> [ 1]  ()  [16] <-- VCC                       *****
-*****        D1       --> [ 2]      [15] <-- D3                        *****
-*****        D0       --> [ 3]  7   [14] <-- CLOCK OSC                 *****
-*****     READY       <-- [ 4]  6   [13] <-- D4                        *****
-*****    NOT WE       --> [ 5]  4   [12] <-- D5                        *****
-*****    NOT CE       --> [ 6]  8   [11] <-- D6                        *****
-***** AUDIO OUT       <-- [ 7]  9   [10] <-- D7                        *****
-*****       GND       --> [ 8]      [ 9] --- N.C.                      *****
-*****                        ========                                  *****
-***************************************************************************/
 
 //#define FREQUENCY 4286819ULL
 #define FREQUENCY 2143409ULL 
@@ -60,13 +44,6 @@
 #define PIN_D6 4
 #define PIN_D7 3
 
-//impliciet bij een NANO
-//Si5351_SDA 18; A4
-//Si5351_SCL 19; A5
-//MIDI_IN RX 1
-
-//pins not used: 0 (TX) A6 and A7 (analogue in only), 15/A1, 16/A2, 17/A3 (used before by TM1638)
-
 SN76489 mySN76489 = SN76489(PIN_NotWE, PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_D4, PIN_D5, PIN_D6, PIN_D7, FREQUENCY);
 byte whichSN[3] = {PIN_NotCE0, PIN_NotCE1, PIN_NotCE2};
 
@@ -75,9 +52,6 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 
 #define MIDI_NUMBER 53
 #define MIDI_LOW 48
-//C#-code to calculate midinote => divider
-//freq = Math.Pow(2, (midiNote-69.0)/12.0) * 440.0
-//notediv[midiNote - MIDI_LOW] = Math.Round(FREQUENCY/(32.0 * freq), MidpointRounding.AwayFromZero)
 uint16_t noteDiv[MIDI_NUMBER] = {
 1024,967,912,861,813,767,724,683,645,609,575,542
 ,512,483,456,431,406,384,362,342,323,304,287,271
@@ -94,74 +68,6 @@ byte notesPlaying[MAX_POLYPHONY];
 byte notesInOrder[MAX_NOTES];
 int bend;
 
-class ProgramConfig {
-  private:
-    byte MidiChannel;
-    byte Polyphony;
-    int Detune0;
-    int Detune1;
-    int Detune2;
-
-    int DetermineDetune(int detune){
-      if (detune > 100){
-        return 100;
-      } else if (detune < -100) {
-        return -100;
-      } else {
-        return detune;
-      }
-    }
-
-  public:
-    void SetMidiChannel(byte channel){
-      MidiChannel = min(channel, 15);
-    }
-    byte GetMidiChannel(){
-      return MidiChannel;
-    }
-
-    void SetPolyphony(byte poly){
-      if (poly == 9) {
-        Polyphony = 9;
-      } else if (poly == 3){
-        Polyphony = 3;
-      } else {
-        Polyphony = 1;
-      }
-    }
-    byte GetPolyphony(){
-      return Polyphony;
-    }
-
-    void SetDetune0(int detune){
-      Detune0 = DetermineDetune(detune);
-    }
-    int GetDetune0(){
-      return Detune0;
-    }
-
-    void SetDetune1(int detune){
-      Detune1 = DetermineDetune(detune);
-    }
-    int GetDetune1(){
-      return Detune1;
-    }
-
-    void SetDetune2(int detune){
-      Detune2 = DetermineDetune(detune);
-    }
-    int GetDetune2(){
-      return Detune2;
-    }
-
-    ProgramConfig(byte midiChannel, byte polyphony, int detune0, int detune1, int detune2){
-      SetMidiChannel(midiChannel);
-      SetPolyphony(polyphony);
-      SetDetune0(detune0);
-      SetDetune1(detune1);
-      SetDetune2(detune2);
-    }
-};
 
 ProgramConfig Program = ProgramConfig(1, 1, 0, 0, 0);
 
@@ -410,5 +316,5 @@ void loop()
           handleControlChange(CHANNEL, MIDI.getData1(), MIDI.getData2());
           break;
       }
-    }
+  }
 }
