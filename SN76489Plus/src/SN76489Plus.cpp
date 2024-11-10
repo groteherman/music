@@ -242,25 +242,25 @@ void setup()
 void loop()
 {
   MIDI.read();
-    if (MIDI.read()) {                    
-      byte type = MIDI.getType();
-      switch (type) {
-        case midi::NoteOn: 
-          handleNoteOn(CHANNEL, MIDI.getData1(), MIDI.getData2());
-          break;
-        case midi::NoteOff: 
-          handleNoteOff(CHANNEL, MIDI.getData1(), MIDI.getData2());
-          break;
-        case midi::ProgramChange:
-          handleProgramChange(CHANNEL, MIDI.getData1());
-          break;
-        case midi::PitchBend:
-          bend = (MIDI.getData1() << 7) + MIDI.getData2();
-          handlePitchBend(CHANNEL, bend);
-          break;
-        case midi::ControlChange:
-          handleControlChange(CHANNEL, MIDI.getData1(), MIDI.getData2());
-          break;
-      }
+  if (MIDI.read()) {                    
+    byte type = MIDI.getType();
+    switch (type) {
+      case midi::NoteOn: 
+        handleNoteOn(CHANNEL, MIDI.getData1(), MIDI.getData2());
+        break;
+      case midi::NoteOff: 
+        handleNoteOff(CHANNEL, MIDI.getData1(), MIDI.getData2());
+        break;
+      case midi::ProgramChange:
+        handleProgramChange(CHANNEL, MIDI.getData1());
+        break;
+      case midi::PitchBend:
+        bend = (MIDI.getData1() << 7) + MIDI.getData2();
+        handlePitchBend(CHANNEL, bend);
+        break;
+      case midi::ControlChange:
+        handleControlChange(CHANNEL, MIDI.getData1(), MIDI.getData2());
+        break;
+    }
   }
 }
