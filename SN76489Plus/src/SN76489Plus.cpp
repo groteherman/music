@@ -87,10 +87,12 @@ uint16_t noteDiv[MIDI_NUMBER] = {
 
 #define MAX_POLYPHONY 9
 #define MAX_NOTES 10
+#define CHANNEL 0
 
-volatile byte numberOfNotes = 0;
-volatile byte notesPlaying[MAX_POLYPHONY];
-volatile byte notesInOrder[MAX_NOTES];
+byte numberOfNotes = 0;
+byte notesPlaying[MAX_POLYPHONY];
+byte notesInOrder[MAX_NOTES];
+int bend;
 
 class ProgramConfig {
   private:
@@ -298,7 +300,10 @@ void handleNoteOff(byte channel, byte pitch, byte velocity){
       }
     }
     if (noteFound){
-      numberOfNotes--;
+      if (numberOfNotes > 0){
+        numberOfNotes--;
+      }
+      //notesInOrder[numberOfNotes] = 0;
     }
     handleNotesPlaying();
   }
@@ -379,15 +384,31 @@ void setup()
   delay(100);
   AllOff();
 
-  MIDI.setHandleNoteOn(handleNoteOn);
-  MIDI.setHandleNoteOff(handleNoteOff);
-  MIDI.setHandlePitchBend(handlePitchBend);
-  MIDI.setHandleControlChange(handleControlChange);
-  MIDI.setHandleProgramChange(handleProgramChange);
   MIDI.begin(MIDI_CHANNEL_OMNI);
 }
 
 void loop()
 {
   MIDI.read();
+    if (MIDI.read()) {                    
+      byte type = MIDI.getType();
+      switch (type) {
+        case midi::NoteOn: 
+          handleNoteOn(CHANNEL, MIDI.getData1(), MIDI.getData2());
+          break;
+        case midi::NoteOff: 
+          handleNoteOff(CHANNEL, MIDI.getData1(), MIDI.getData2());
+          break;
+        case midi::ProgramChange:
+          handleProgramChange(CHANNEL, MIDI.getData1());
+          break;
+        case midi::PitchBend:
+          bend = (MIDI.getData1() << 7) + MIDI.getData2();
+          handlePitchBend(CHANNEL, bend);
+          break;
+        case midi::ControlChange:
+          handleControlChange(CHANNEL, MIDI.getData1(), MIDI.getData2());
+          break;
+      }
+    }
 }
