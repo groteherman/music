@@ -1,0 +1,39 @@
+#include <Arduino.h>
+
+//#define FREQUENCY 4286819ULL
+#define FREQUENCY 2143409ULL 
+#define DETUNE_FACTOR 107170ULL //FREQ / 20
+#define PITCH_FACTOR 26167ULL //100 * FREQ / 8191
+#define GATE 13 //same as LED_BUILTIN
+
+#define NOVATION_DETUNE 41
+#define NOVATION_LEVEL 72
+#define NOVATION_PWM 45
+
+#define PIN_NotCE0 8
+#define PIN_NotCE1 2
+#define PIN_NotCE2 14
+
+#define PIN_NotWE 9
+#define PIN_D0 11
+#define PIN_D1 12
+#define PIN_D2 10
+#define PIN_D3 7
+#define PIN_D4 6
+#define PIN_D5 5
+#define PIN_D6 4
+#define PIN_D7 3
+
+#define MIDI_NUMBER 53
+#define MIDI_LOW 48
+
+#define MAX_POLYPHONY 9
+#define MAX_NOTES 10
+#define CHANNEL 0
+
+uint16_t noteDiv[MIDI_NUMBER] = {
+1024,967,912,861,813,767,724,683,645,609,575,542
+,512,483,456,431,406,384,362,342,323,304,287,271
+,256,242,228,215,203,192,181,171,161,152,144,136
+,128,121,114,108,102,96,91,85,81,76,72,68
+,64,60,57,54,51};
