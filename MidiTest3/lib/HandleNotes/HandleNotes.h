@@ -37,11 +37,16 @@ struct noot_struct {
   uint8_t polyphony;
   uint8_t notesPlaying[MAX_POLYPHONY];
   uint8_t notesInOrder[MAX_NOTES];
+  int8_t detune0;
+  int8_t detune1;
+  int8_t detune2;
 };
 
 uint8_t handleNotesPlayingOff(noot_struct*);
 uint8_t handleNotesPlayingOn(noot_struct*);
 void handleNoteOn(uint8_t, uint8_t, uint8_t, noot_struct*);
 void handleNoteOff(uint8_t, uint8_t, uint8_t, noot_struct*);
+int32_t determinePitchBend(uint8_t, uint8_t);
+long determineFrequency(int32_t, int8_t);
 
 #endif /* HANDLENOTES_H_ */

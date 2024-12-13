@@ -93,3 +93,16 @@ void handleNoteOff(uint8_t channel, uint8_t pitch, uint8_t velocity, struct noot
     }
   }
 }
+
+int32_t determinePitchBend(uint8_t byte1, uint8_t byte2){
+  int32_t bend = (byte1 << 7) + byte2;
+  if (bend >= 0) {
+    return PITCH_FACTOR * (bend);
+  } else {
+    return (PITCH_FACTOR * (bend)) >> 1;
+  }
+}
+
+long determineFrequency(int32_t pitchBend, int8_t detune){
+  return 100 * FREQUENCY + DETUNE_FACTOR * detune + pitchBend;
+}

@@ -119,6 +119,13 @@ void handleNotesPlaying(noot_struct *nootjes){
   #endif
 }
 
+void handlePitchBend(uint8_t byte1, uint8_t byte2, noot_struct *nootjes){
+  int32_t pitchBend = determinePitchBend(byte1, byte2);
+  si5351.set_freq(determineFrequency(pitchBend, nootjes->detune0), SI5351_CLK0);
+  si5351.set_freq(determineFrequency(pitchBend, nootjes->detune1), SI5351_CLK1);
+  si5351.set_freq(determineFrequency(pitchBend, nootjes->detune2), SI5351_CLK2);
+}
+
 void setup() {
   pinMode(GATE, OUTPUT);
   digitalWrite(GATE, HIGH);
@@ -169,6 +176,9 @@ void loop() {
       case midi::NoteOff: 
         handleNoteOff(CHANNEL, byte1, byte2, &nootjes);
         handleNotesPlaying(&nootjes);
+        break;
+      case midi::PitchBend:
+        handlePitchBend(byte1, byte2, &nootjes);
         break;
     }
   }
