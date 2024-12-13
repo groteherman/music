@@ -10,7 +10,7 @@ void tearDown(void) {
 }
 
 void test_handleNoteOn_1_note(){
-    noot_struct nootjes = { 0, 1, {}, {} };
+    noot_struct nootjes = { 0, 1, {}, {}, 0, 0, 0 };
         
     uint8_t midiNote = 50;
     handleNoteOn(1, midiNote, 128, &nootjes);
@@ -20,7 +20,7 @@ void test_handleNoteOn_1_note(){
 }
 
 void test_handleNoteOn_2_notes(){
-    noot_struct nootjes = { 0, 1, {}, {} };
+    noot_struct nootjes = { 0, 1, {}, {}, 0, 0, 0 };
         
     uint8_t midiNote = 50;
     handleNoteOn(1, midiNote, 128, &nootjes);
@@ -32,7 +32,7 @@ void test_handleNoteOn_2_notes(){
 }
 
 void test_handleNoteOn_same_note_2x(){
-    noot_struct nootjes = { 0, 1, {}, {} };
+    noot_struct nootjes = { 0, 1, {}, {}, 0, 0, 0 };
         
     uint8_t midiNote = 50;
     handleNoteOn(1, midiNote, 128, &nootjes);
@@ -43,7 +43,7 @@ void test_handleNoteOn_same_note_2x(){
 }
 
 void test_handleNoteOn_2_notes_1off(){
-    noot_struct nootjes = { 0, 1, {}, {} };
+    noot_struct nootjes = { 0, 1, {}, {}, 0, 0, 0 };
         
     uint8_t midiNote = 50;
     handleNoteOn(1, midiNote, 128, &nootjes);
@@ -54,7 +54,7 @@ void test_handleNoteOn_2_notes_1off(){
 }
 
 void test_handleNotesPlayingOn_1_note(){
-    noot_struct nootjes = { 0, 1, {}, {} };
+    noot_struct nootjes = { 0, 1, {}, {}, 0, 0, 0 };
         
     uint8_t midiNote = 50;
     handleNoteOn(1, midiNote, 128, &nootjes);
@@ -64,7 +64,7 @@ void test_handleNotesPlayingOn_1_note(){
 }
 
 void test_handleNotesPlayingOn_2_notes(){
-    noot_struct nootjes = { 0, 1, {}, {} };
+    noot_struct nootjes = { 0, 1, {}, {}, 0, 0, 0 };
         
     uint8_t midiNote = 50;
     handleNoteOn(1, midiNote, 128, &nootjes);
@@ -87,7 +87,7 @@ void test_handleNotesPlayingOn_2_notes(){
 }
 
 void test_handleNotesPlayingOn_3_notes(){
-    noot_struct nootjes = { 0, 3, {}, {} };
+    noot_struct nootjes = { 0, 3, {}, {}, 0, 0, 0 };
         
     uint8_t midiNote = 50;
     handleNoteOn(1, midiNote, 128, &nootjes);
