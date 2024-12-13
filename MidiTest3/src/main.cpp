@@ -29,7 +29,6 @@ uint16_t noteDiv[MIDI_NUMBER] = {
 ,64,60,57,54,51};
 
 noot_struct nootjes = { 0, 1, {}, {} };
-noot_struct *noot_ptr = &nootjes;
 
 #ifdef DODEBUG
 char buffer[9];
@@ -149,7 +148,7 @@ void setup() {
   si5351.set_freq(100 * FREQUENCY, SI5351_CLK1);
   si5351.set_freq(100 * FREQUENCY, SI5351_CLK2);
 
-  AllOff(noot_ptr);
+  AllOff(&nootjes);
   MIDI.begin(MIDI_CHANNEL_OMNI);
   digitalWrite(GATE, LOW);
 }
