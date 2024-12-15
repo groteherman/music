@@ -131,6 +131,40 @@ void test_handleNotesPlayingOn_3_notes(){
     TEST_ASSERT_EQUAL_UINT8(midiNote + 2, nootjes.notesPlaying[2]);
 }
 
+void test_determinePitchBend(){
+    TEST_ASSERT_EQUAL_INT32(0, determinePitchBend(0, 64));
+    TEST_ASSERT_EQUAL_INT32(PITCH_FACTOR, determinePitchBend(1, 64));
+    TEST_ASSERT_EQUAL_INT32(-PITCH_FACTOR/2, determinePitchBend(127, 63));
+}
+
+void test_determineFrequency_no_detune_no_pitchbend(){
+    noot_struct nootjes = { 0, 1, {}, {}, 0, 0, 0 };
+    int32_t pitchBend = determinePitchBend(0, 64);
+    long frequency = determineFrequency(pitchBend, nootjes.detune0);
+    TEST_ASSERT_EQUAL_INT32(100 * FREQUENCY, frequency);
+}
+
+void test_determineFrequency_detune_no_pitchbend(){
+    noot_struct nootjes = { 0, 1, {}, {}, 1, 0, 0 };
+    int32_t pitchBend = determinePitchBend(0, 64);
+    long frequency = determineFrequency(pitchBend, nootjes.detune0);
+    TEST_ASSERT_EQUAL_INT32(100 * FREQUENCY + DETUNE_FACTOR, frequency);
+}
+
+void test_determineFrequency_no_detune_pitchbend(){
+    noot_struct nootjes = { 0, 1, {}, {}, 0, 0, 0 };
+    int32_t pitchBend = determinePitchBend(1, 64);
+    long frequency = determineFrequency(pitchBend, nootjes.detune0);
+    TEST_ASSERT_EQUAL_INT32(100 * FREQUENCY + pitchBend, frequency);
+}
+
+void test_determineFrequency_detune_pitchbend(){
+    noot_struct nootjes = { 0, 1, {}, {}, 1, 0, 0 };
+    int32_t pitchBend = determinePitchBend(1, 64);
+    long frequency = determineFrequency(pitchBend, nootjes.detune0);
+    TEST_ASSERT_EQUAL_INT32(100 * FREQUENCY + DETUNE_FACTOR * nootjes.detune0 + pitchBend, frequency);
+}
+
 int main( int argc, char **argv) {
     UNITY_BEGIN();
 
@@ -138,8 +172,16 @@ int main( int argc, char **argv) {
     RUN_TEST(test_handleNoteOn_2_notes);
     RUN_TEST(test_handleNoteOn_same_note_2x);
     RUN_TEST(test_handleNoteOn_2_notes_1off);
+
     RUN_TEST(test_handleNotesPlayingOn_1_note);
     RUN_TEST(test_handleNotesPlayingOn_2_notes);
     RUN_TEST(test_handleNotesPlayingOn_3_notes);
+
+    RUN_TEST(test_determinePitchBend);
+    RUN_TEST(test_determineFrequency_no_detune_no_pitchbend);
+    RUN_TEST(test_determineFrequency_detune_no_pitchbend);
+    RUN_TEST(test_determineFrequency_no_detune_pitchbend);
+    RUN_TEST(test_determineFrequency_detune_pitchbend);
+
     UNITY_END();
 }
