@@ -126,6 +126,24 @@ void handlePitchBend(uint8_t byte1, uint8_t byte2, noot_struct *nootjes){
   si5351.set_freq(determineFrequency(pitchBend, nootjes->detune2), SI5351_CLK2);
 }
 
+void handleControlChange(uint8_t channel, uint8_t controller, uint8_t value, noot_struct *nootjes){
+  switch (controller) {
+    case NOVATION_DETUNE :
+        nootjes->detune0 = value - 64;
+        si5351.set_freq(determineFrequency(0, nootjes->detune0), SI5351_CLK0);
+        break;
+    case NOVATION_LEVEL :
+        nootjes->detune1 = value - 64;
+        si5351.set_freq(determineFrequency(0, nootjes->detune1), SI5351_CLK1);
+        break;
+    case NOVATION_PWM :
+        nootjes->detune2 = value - 64;
+        si5351.set_freq(determineFrequency(0, nootjes->detune2), SI5351_CLK2);
+        break;
+    }
+}
+
+
 void setup() {
   pinMode(GATE, OUTPUT);
   digitalWrite(GATE, HIGH);
@@ -180,6 +198,10 @@ void loop() {
       case midi::PitchBend:
         handlePitchBend(byte1, byte2, &nootjes);
         break;
+      case midi::ControlChange:
+        handleControlChange(CHANNEL, byte1, byte2, &nootjes);
+        break;
+
     }
   }
 }
