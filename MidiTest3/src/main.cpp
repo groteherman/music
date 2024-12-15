@@ -143,7 +143,6 @@ void handleControlChange(uint8_t channel, uint8_t controller, uint8_t value, noo
     }
 }
 
-
 void setup() {
   pinMode(GATE, OUTPUT);
   digitalWrite(GATE, HIGH);
@@ -180,28 +179,21 @@ void setup() {
 
 void loop() {
   if (MIDI.read()) {                    
-    byte type = MIDI.getType();
-    byte byte1 = MIDI.getData1();
-    byte byte2 = MIDI.getData2();
-#ifdef DODEBUG
-    ToTm(type, byte1, byte2);
-#endif
-    switch (type) {
+    switch (MIDI.getType()) {
       case midi::NoteOn: 
-        handleNoteOn(CHANNEL, byte1, byte2, &nootjes);
+        handleNoteOn(CHANNEL, MIDI.getData1(), MIDI.getData2(), &nootjes);
         handleNotesPlaying(&nootjes);
         break;
       case midi::NoteOff: 
-        handleNoteOff(CHANNEL, byte1, byte2, &nootjes);
+        handleNoteOff(CHANNEL, MIDI.getData1(), MIDI.getData2(), &nootjes);
         handleNotesPlaying(&nootjes);
         break;
       case midi::PitchBend:
-        handlePitchBend(byte1, byte2, &nootjes);
+        handlePitchBend( MIDI.getData1(), MIDI.getData2(), &nootjes);
         break;
       case midi::ControlChange:
-        handleControlChange(CHANNEL, byte1, byte2, &nootjes);
+        handleControlChange(CHANNEL, MIDI.getData1(), MIDI.getData2(), &nootjes);
         break;
-
     }
   }
 }
