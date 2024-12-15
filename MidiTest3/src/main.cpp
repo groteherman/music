@@ -78,7 +78,7 @@ void noteOff(byte index, byte polyphony){
   }
 }
 
-void AllOff(noot_struct *nootjes){
+void AllOff(){
   digitalWrite(PIN_NotCE0, false);
   digitalWrite(PIN_NotCE1, false);
   digitalWrite(PIN_NotCE2, false);
@@ -89,13 +89,6 @@ void AllOff(noot_struct *nootjes){
   digitalWrite(PIN_NotCE0, true);
   digitalWrite(PIN_NotCE1, true);
   digitalWrite(PIN_NotCE2, true);
-  for(byte i=0; i < MAX_POLYPHONY; i++){
-    nootjes->notesPlaying[i] = 0;
-  }
-  for(byte i=0; i < MAX_NOTES; i++){
-    nootjes->notesInOrder[i] = 0;
-  }
-  nootjes->numberOfNotes = 0;
   digitalWrite(GATE, false);
 }
 
@@ -143,6 +136,36 @@ void handleControlChange(uint8_t channel, uint8_t controller, uint8_t value, noo
     }
 }
 
+void initNootStruct(noot_struct *nootjes, int8_t detune0, int8_t detune1, int8_t detune2) {
+  nootjes->numberOfNotes = 0;
+  nootjes->polyphony = 1;
+  memset(nootjes->notesPlaying, 0, MAX_POLYPHONY);
+  memset(nootjes->notesInOrder, 0, MAX_NOTES);
+  nootjes->detune0 = detune0;
+  nootjes->detune1 = detune1;
+  nootjes->detune2 = detune2;
+}
+
+void handleProgramChange(byte channel, byte program, noot_struct *nootjes){
+  switch (program) {
+    case 0 :
+      initNootStruct(nootjes, 0, 0, 0);
+      break;
+    case 1 :
+      initNootStruct(nootjes, 0, 1, -1);
+      break;
+    case 2 :
+      initNootStruct(nootjes, 0, 1, 2);
+      break;
+    default:
+      break;
+  }
+  handleControlChange(channel, NOVATION_DETUNE, 64, nootjes);
+  handleControlChange(channel, NOVATION_LEVEL, 64, nootjes);
+  handleControlChange(channel, NOVATION_PWM, 64, nootjes);
+  AllOff();
+}
+
 void setup() {
   pinMode(GATE, OUTPUT);
   digitalWrite(GATE, HIGH);
@@ -172,7 +195,8 @@ void setup() {
   si5351.set_freq(100 * FREQUENCY, SI5351_CLK1);
   si5351.set_freq(100 * FREQUENCY, SI5351_CLK2);
 
-  AllOff(&nootjes);
+  initNootStruct(&nootjes, 0, 0, 0);
+  AllOff();
   MIDI.begin(MIDI_CHANNEL_OMNI);
   digitalWrite(GATE, LOW);
 }
@@ -193,6 +217,11 @@ void loop() {
         break;
       case midi::ControlChange:
         handleControlChange(CHANNEL, MIDI.getData1(), MIDI.getData2(), &nootjes);
+        break;
+      case midi::ProgramChange:
+        handleProgramChange(CHANNEL, MIDI.getData1(), &nootjes);
+        break;
+      default:
         break;
     }
   }
