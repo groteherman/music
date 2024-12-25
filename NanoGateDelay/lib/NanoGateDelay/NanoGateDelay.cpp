@@ -1,10 +1,6 @@
 #include <stdint.h>
 #include "NanoGateDelay.h"
 
-uint16_t getByteIndex(uint16_t index) {
-    return index >> 3;
-}
-
 uint8_t getBitIndex(uint16_t index) {
     return index & 7;
 }

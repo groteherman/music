@@ -7,7 +7,7 @@
 #define SWITCH_PIN 5
 #define MAXARRAY 1024
 
-uint16_t getByteIndex(uint16_t);
+#define getByteIndex(t) ((t) >> 3)
 uint8_t getBitIndex(uint16_t);
 bool getAndSetBit(int16_t, bool, uint8_t*);
 
