@@ -1,10 +1,6 @@
 #include <stdint.h>
 #include "NanoGateDelay.h"
 
-uint8_t getBitIndex(uint16_t index) {
-    return index & 7;
-}
-
 bool getAndSetBit(int16_t index, bool value, uint8_t *delayArr) {
     uint16_t byteIndex = getByteIndex(index);
     uint8_t bitIndex = getBitIndex(index);

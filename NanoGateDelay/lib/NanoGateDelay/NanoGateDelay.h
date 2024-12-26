@@ -8,7 +8,8 @@
 #define MAXARRAY 1024
 
 #define getByteIndex(t) ((t) >> 3)
-uint8_t getBitIndex(uint16_t);
+#define getBitIndex(t) ((t) & 7)
+
 bool getAndSetBit(int16_t, bool, uint8_t*);
 
 #endif /*NANOGATEDELAY_H_*/
