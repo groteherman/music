@@ -6,9 +6,8 @@
 #define PIN_IN2 A3
 #define LEDSTRIP1_PIN 9
 
-uint8_t delayArr[MAXARRAY] = {};
-uint16_t maxDelay = MAXARRAY * 8;
-uint16_t actualDelay = maxDelay;
+bool delayArr[MAXARRAY] = {};
+uint16_t actualDelay = MAXARRAY;
 volatile uint16_t bitIndex;
 bool justPressed;
 
@@ -61,7 +60,7 @@ void loop() {
       if (actualDelay > 4){
         actualDelay = actualDelay >> 2;
       } else {
-        actualDelay = maxDelay;
+        actualDelay = MAXARRAY;
       }
     }
   } else {
