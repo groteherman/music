@@ -7,6 +7,9 @@
 #define SWITCH_PIN 5
 #define MAXARRAY 1024
 
-bool getAndSetBit(int16_t, bool, bool*);
+#define getByteIndex(t) ((t) >> 3)
+#define getBitIndex(t) ((t) & 7)
+
+bool getAndSetBit(int16_t, bool, uint8_t*);
 
 #endif /*NANOGATEDELAY_H_*/
