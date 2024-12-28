@@ -6,10 +6,11 @@ bool getAndSetBit(int16_t index, bool value, uint8_t *delayArr) {
     uint8_t bitIndex = getBitIndex(index);
 
     uint8_t mask = 1 << bitIndex;
-    bool retval = delayArr[byteIndex] & mask;
-
     uint8_t val = value << bitIndex;
-    delayArr[byteIndex] |= val;
+    uint8_t *arrVal = &delayArr[byteIndex];
+
+    bool retval = *arrVal & mask;
+    *arrVal |= val;
 
     return retval;
 }
