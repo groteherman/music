@@ -11,6 +11,7 @@
                 "C:/git/music/NanoGateDelay/include",
                 "C:/git/music/NanoGateDelay/src",
                 "C:/git/music/NanoGateDelay/lib/NanoGateDelay",
+                "C:/git/music/NanoGateDelay/lib/digitalWriteFast",
                 "C:/git/music/NanoGateDelay/.pio/libdeps/native/Unity/src",
                 ""
             ],
@@ -20,6 +21,7 @@
                     "C:/git/music/NanoGateDelay/include",
                     "C:/git/music/NanoGateDelay/src",
                     "C:/git/music/NanoGateDelay/lib/NanoGateDelay",
+                    "C:/git/music/NanoGateDelay/lib/digitalWriteFast",
                     "C:/git/music/NanoGateDelay/.pio/libdeps/native/Unity/src",
                     ""
                 ]
