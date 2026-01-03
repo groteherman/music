@@ -283,8 +283,8 @@ AudioConnection          patchCord152(mixer2, 0, mixer6, 0);
 AudioConnection          patchCord153(mixer5, 0, mixer6, 3);
 AudioConnection          patchCord154(mixer3, 0, mixer6, 1);
 AudioConnection          patchCord155(mixer6, 0, mixer7, 0);
-AudioConnection          patchCord156(delay1, 0, mixer7, 2);
-AudioConnection          patchCord157(mixer7, delay1);
+//AudioConnection          patchCord156(delay1, 0, mixer7, 2);
+//AudioConnection          patchCord157(mixer7, delay1);
 AudioConnection          patchCord158(mixer7, 0, i2s1, 0);
 AudioConnection          patchCord159(mixer9, 0, i2s1, 1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=144,259
