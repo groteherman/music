@@ -97,11 +97,7 @@ void setup() {
   AudioMemory(128);                  // allocate some memory for audio library
   
   Serial.begin(115200);             // initialize serial communication
-  //waveform1.begin(WAVEFORM_SAWTOOTH);
-  //waveform1.amplitude(0.8);
-  //waveform1.frequency(200);
-  dc1.amplitude(1);
-  
+
   noise1.amplitude(0.5);
   delay1.delay(0, 65);
   mixer1.gain(0, 0.7);                // I2S left input level
