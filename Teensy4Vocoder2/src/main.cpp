@@ -63,13 +63,15 @@ unsigned long lastPeriodStart; // for repeat function
 const int periodDuration = 100; //msec between each readout of userinterface
 int songlength=0;
 
-
 void setup() {
   sgtl5000_1.enable();
   // sgtl5000_1.inputSelect(AUDIO_INPUT_MIC);
   sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
-  sgtl5000_1.micGain(40);
-  sgtl5000_1.volume(0.9);
+  sgtl5000_1.muteHeadphone();
+  sgtl5000_1.lineInLevel(12);
+  sgtl5000_1.lineOutLevel(25);
+  sgtl5000_1.micGain(0);
+  sgtl5000_1.adcHighPassFilterEnable();
   
 // below are the centre frequencies of each filter
   const float res = 5;              // q
@@ -98,6 +100,8 @@ void setup() {
   //waveform1.begin(WAVEFORM_SAWTOOTH);
   //waveform1.amplitude(0.8);
   //waveform1.frequency(200);
+  dc1.amplitude(1);
+  
   noise1.amplitude(0.5);
   delay1.delay(0, 65);
   mixer1.gain(0, 0.7);                // I2S left input level
@@ -117,14 +121,14 @@ void setup() {
   mixer5.gain(0, 1);
   mixer5.gain(1, 1);
   mixer5.gain(2, 1);
-  mixer5.gain(3, 1);
+  mixer5.gain(3, 0.2);
   mixer6.gain(0, 1);
   mixer6.gain(1, 1);
   mixer6.gain(2, 1);
-  mixer6.gain(3, 0); //noise off
-  mixer7.gain(1, 0.2);
-  mixer7.gain(2, 0.2);
-  mixer7.gain(3, 0.0);
+  mixer6.gain(3, 1);
+  mixer7.gain(0, 1); //wet signal
+  mixer7.gain(1, 0); //dry signal
+  mixer7.gain(2, 0); //delay, turned off
   mixer9.gain(0, 0.7);
   mixer9.gain(1, 0.7);
   mixer10.gain(0, 1);
@@ -146,6 +150,7 @@ void setup() {
   filter14.resonance(res);
   filter15.resonance(res);
   filter16.resonance(res);
+
   filter1B.resonance(res);                                       // set the resonance of the filters
   filter2B.resonance(res);
   filter3B.resonance(res);
@@ -162,6 +167,7 @@ void setup() {
   filter14B.resonance(res);
   filter15B.resonance(res);
   filter16B.resonance(res);
+
   Bfilter1.resonance(res);                                       // set the resonance of the filters
   Bfilter2.resonance(res);
   Bfilter3.resonance(res);
@@ -178,6 +184,7 @@ void setup() {
   Bfilter14.resonance(res);
   Bfilter15.resonance(res);
   Bfilter16.resonance(res);
+
   Cfilter1.resonance(res);                                       // set the resonance of the filters
   Cfilter2.resonance(res);
   Cfilter3.resonance(res);
@@ -194,6 +201,7 @@ void setup() {
   Cfilter14.resonance(res);
   Cfilter15.resonance(res);
   Cfilter16.resonance(res);
+
   Bfilter1.frequency(freq[0]);
   Bfilter2.frequency(freq[1]);
   Bfilter3.frequency(freq[2]);
@@ -210,6 +218,7 @@ void setup() {
   Bfilter14.frequency(freq[13]);
   Bfilter15.frequency(freq[14]);
   Bfilter16.frequency(freq[15]);
+
   Cfilter1.frequency(freq[0]);
   Cfilter2.frequency(freq[1]);
   Cfilter3.frequency(freq[2]);
@@ -226,6 +235,7 @@ void setup() {
   Cfilter14.frequency(freq[13]);
   Cfilter15.frequency(freq[14]);
   Cfilter16.frequency(freq[15]);
+
   filter1.frequency(freq[0]);
   filter2.frequency(freq[1]);
   filter3.frequency(freq[2]);
@@ -242,6 +252,7 @@ void setup() {
   filter14.frequency(freq[13]);
   filter15.frequency(freq[14]);
   filter16.frequency(freq[15]);
+
   filter1B.frequency(freq[0]);
   filter2B.frequency(freq[1]);
   filter3B.frequency(freq[2]);
@@ -340,8 +351,6 @@ void setup() {
   biquad16.setLowpass(1, 200, 0.707);
   biquad16.setLowpass(2, 60, 0.53);
   biquad16.setLowpass(3, 160, 0.707);
-
-
 }
 
 void loop() {
