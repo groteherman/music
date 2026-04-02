@@ -8,19 +8,49 @@
 
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial2, MIDI);
 
-byte data[6]; 
+M5GFX& lcd = M5.Lcd;
+LGFX_Sprite sprite(&lcd);
+#define NumLogLines 16
+#define LineLength 14
+byte logIndex = 0;
+char logArr[NumLogLines][14];
 
 void WriteToDisplay(char type, int d1, int d2, int d3) {
+  sprintf(logArr[logIndex], "%c:%3d:%3d:%3d", type, d1, d2, d3);
+
+  logIndex++;
+  if (logIndex >= NumLogLines)
+  {
+    logIndex = 0;
+  }
+
+  M5.Lcd.clearDisplay();
+  M5.Lcd.setCursor(0, 10);
+
+  for(byte i = logIndex; i < NumLogLines; i++){
+    M5.Lcd.println(logArr[i]);
+  }
+  for(byte i = 0; i < logIndex; i++){
+    M5.Lcd.println(logArr[i]);
+  }
+}
+
+void ReadButtons(){
+  M5.update();
+  if (M5.BtnA.wasPressed()){
     M5.Lcd.clearDisplay();
-    M5.Lcd.setCursor(10, 85);
-    M5.Lcd.printf("%c:%3d:%3d:%3d:\r\n", type, d1, d2, d3);
+    M5.Lcd.setCursor(0, 10);
+    for(byte i = 0; i < NumLogLines; i++){
+      strcpy(logArr[i], "");
+    }
+  }
 }
 
 void setup() {
     M5.begin();
     M5.Lcd.setTextColor(YELLOW);
     M5.Lcd.setTextSize(1.5);
-    M5.Lcd.setCursor(10, 10);
+    M5.Lcd.setCursor(5, 10);
     M5.Lcd.println("MIDI MON");
     Serial2.begin(31250, SERIAL_8N1, 33, 32);
     MIDI.begin(MIDI_CHANNEL_OMNI);
@@ -28,6 +58,7 @@ void setup() {
 
 void loop() {
    int note, velocity, channel, d1, d2;
+   ReadButtons();
    if (MIDI.read()) {
      byte type = MIDI.getType();
      switch (type) {
