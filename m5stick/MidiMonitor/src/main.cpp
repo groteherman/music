@@ -78,10 +78,10 @@ void loop() {
          WriteToDisplay('-', channel, note, 0);
          break;
        case midi::ProgramChange:
-       default:
          d1 = MIDI.getData1();
          d2 = MIDI.getData2();
          WriteToDisplay('P', type, d1, d2);
-     }
-   }
+       //default:
+    }
+  }
 }
