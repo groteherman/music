@@ -1,0 +1,6 @@
+esp32 cyd sd card:
+
+gpio23 mosi
+gpio19 miso
+gpio18 sck
+gpio5  ss
